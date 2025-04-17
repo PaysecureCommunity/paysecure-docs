@@ -4,32 +4,38 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
+    title: 'API Reference',
     Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        API Reference is a powerful tool that allows you to explore and
+        understand the various APIs available in our system. It provides
+        detailed information about each API, including its endpoints,
+        parameters, and response formats.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Guide',
     Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        The guide is a comprehensive resource that provides step-by-step
+        instructions on how to use our system effectively. It covers a wide
+        range of topics, from basic concepts to advanced features, ensuring
+        that you have all the information you need to get started and succeed.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Payment Methods',
     Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Payment methods are the various ways in which you can make payments
+        using our system. We support a wide range of payment options, including
+        credit cards, debit cards, and digital wallets, ensuring that you can
+        choose the method that works best for you.
       </>
     ),
   },
