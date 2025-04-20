@@ -38,7 +38,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
         title: 'Paysecure API Docs',
         logo: {
           alt: 'API Docs',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
           {
@@ -47,7 +47,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             position: 'left',
             label: 'API Reference',
           },
-          {to: '/guides', label: 'Guides', position: 'left'},
+          {to: '/guides/guide', label: 'Guides', position: 'left'},
           {
             href: 'https://github.com/PaysecureCommunity/paysecure-docs',
             label: 'GitHub',
@@ -62,8 +62,12 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             title: 'Docs',
             items: [
               {
+                label: 'Introduction',
+                to: '/docs/intro',
+              },
+              {
                 label: 'API Reference',
-                to: '/docs/api-reference/intro',
+                to: '/docs/api-reference',
               },
             ],
           },
@@ -72,7 +76,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             items: [
               {
                 label: 'Guides',
-                to: '/guides',
+                to: '/guide/guide',
               },
               {
                 label: 'GitHub',
