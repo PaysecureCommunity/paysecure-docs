@@ -1,0 +1,97 @@
+---
+id: FAQ
+title: FAQ
+description: Frequently asked questions about the Paysecure API.
+---
+
+
+## Q1. How do I log in to the dashboard?
+**Ans:** Click on the following link: [Paysecure Dashboard](https://app.paysecure.net/). Enter your username and password to access the dashboard.
+
+## Q2. How do I switch to live mode in the Merchant Dashboard?
+**Ans:** To access the live API key, uncheck the "Is Sandbox" option located in the top right corner of your Merchant Dashboard.
+
+## Q3. How can I obtain the API key for live mode?
+**Ans:** After successfully logging into the dashboard and switching to live mode, navigate to the Pay-In dashboard. Under Dashboard Analytics, select "API Key," then click on "Generate Key" to create a new API key. Your live authentication key will be ready for use.
+
+## Q4. How can a merchant generate a Brand Key for live mode?
+**Ans:** After successfully logging into the dashboard and switching to live mode, navigate to the Pay-In Dashboard. Under Dashboard Analytics, select "Brand ID", then click on "Generate Key" to create a new Brand ID. Your live Brand ID will be ready for use.
+
+## Q5. How should the requested API key be used?
+**Ans:** The API key should be included as a Bearer token in the Authorization header of every API request.
+
+## Q6. Can a merchant use the test data values from the sandbox in live mode?
+**Ans:** No, test data from the sandbox cannot be used in live mode. The sandbox environment is meant for testing purposes, and live transactions require real data and a separate live API key and Brand ID.
+
+## Q7. Does Paysecure support card in sandbox mode?
+**Ans:** Yes, Paysecure supports card transactions in sandbox mode for testing purposes.
+
+## Q8. Can the APM method be used in sandbox mode?
+**Ans:** No, the APM method can only be used for testing in live mode.
+
+## Q9. Does a user need a different API key and Brand ID for staging and live mode?
+**Ans:** Yes, separate API keys and Brand IDs are required for staging and live modes.
+
+## Q10. What is a webhook?
+**Ans:** A webhook is a mechanism that allows a merchant to receive real-time notifications from our server to their server. It provides updates on transaction status changes and other important transaction-related events.
+
+## Q11. Do we need to set up the webhook for all events?
+**Ans:** Yes, webhooks must be set up for all events.
+
+## Q12. How can a merchant set up a webhook in the dashboard?
+**Ans:**
+1. Log in to the merchant dashboard.
+2. Navigate to the Pay-In Dashboard and click on Dashboard Analytics.
+3. Select Webhooks.
+4. Set up the webhook endpoint under Partner Dashboard → Webhooks → New Webhook.
+5. Save the endpoint by clicking "Create".
+
+## Q13. What are the major events in the Pay-In method for all payment methods?
+| Event Type         | Triggered When                             | Data Sent                 |
+|--------------------|--------------------------------|--------------------------|
+| Payment in Process | The payment has been initiated but is still being processed. | Purchase Object (Payload) |
+| Expired           | The transaction has expired.   | Purchase Object (Payload) |
+| Error            | An error occurred during the transaction. | Purchase Object (Payload) |
+| Paid            | The payment was successfully completed. | Purchase Object (Payload) |
+
+## Q14. What are the major events in the Payout method?
+| Event Type         | Triggered When                             | Data Sent                 |
+|--------------------|--------------------------------|--------------------------|
+| Payout in Process | The payout has been initiated but is still processing. | Purchase Object (Payload) |
+| Expired           | The transaction has expired.   | Purchase Object (Payload) |
+| Error            | An error occurred during the transaction. | Purchase Object (Payload) |
+| Paid            | The payout was successfully completed. | Purchase Object (Payload) |
+
+## Q15. What is the API endpoint to generate a purchase for Pay-In and Pay-Out?
+**Ans:**
+To create a new purchase, use the **POST** HTTP method with the following API endpoints:
+
+- **For Pay-In:**
+  ```
+  POST https://api.paysecure.net/api/v1/purchases/
+  ```
+- **For Pay-Out:**
+  ```
+  POST https://api.paysecure.net/api/v1/payout/
+  ```
+
+Make sure to include the required authentication headers, such as the API key and Brand ID, in the request.
+
+## Q16. Can a merchant check the status of a created transaction in Postman? If yes, how?
+**Ans:** Yes, a merchant can check the status of a transaction using the **GET** method in Postman.
+
+- **To check the status of a Pay-In transaction:**
+  ```
+  GET https://api.paysecure.net/api/v1/purchases/{purchaseId}/
+  ```
+- **To check the balance after a Pay-Out transaction:**
+  ```
+  GET https://api.paysecure.net/api/v1/getpayout/{payoutId}/
+  ```
+
+Merchants must include the required authentication headers, such as the API key, when making these requests.
+
+### **Note:**
+📌 Merchants can also view transaction statistics through the BO Dashboard:
+- **For Pay-In:** Go to **Dashboard > Report > Transaction**
+- **For Pay-Out:** Go to **Dashboard > Payout > Report**
