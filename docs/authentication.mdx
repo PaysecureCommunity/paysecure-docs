@@ -1,0 +1,35 @@
+---
+id: authentication
+title: "Authentication"
+---
+
+# Authentication
+
+To access the API, you need to acquire your unique API key from the **Merchant Dashboard** under the **API Keys** section in your account. Ensure that you use this key as a bearer token in the `Authorization` header for every request you send.
+
+## Authorization Header
+
+```http
+Authorization: Bearer {{APIKey}}
+```
+
+## Obtaining API Keys
+
+### Sandbox API Key
+To get your sandbox API key credentials:
+1. Log in to your **Merchant Dashboard**.
+2. Navigate to the **API Keys** section.
+3. Enable the **Is Sandbox** option, located in the top right corner under your **Merchant Profile**.
+
+### Live API Key
+To obtain your live API key:
+1. Log in to your **Merchant Dashboard**.
+2. Navigate to the **API Keys** section.
+3. Uncheck the **Is Sandbox** option in the top right corner under your **Merchant Profile**.
+4. After unchecking, the page will refresh, allowing you to generate an API key for live transactions.
+
+To reiterate:
+- The API keys in **Sandbox mode** are for testing purposes (when **Is Sandbox** is **CHECKED** in the top right corner under the **Merchant Profile**).
+- The **Live API key credentials** are used for processing actual card transactions in **Live mode** (when **Is Sandbox** is **UNCHECKED** in the same location).
+
+Use the appropriate API key based on the environment you are working in.
