@@ -47,7 +47,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             position: 'left',
             label: 'API Reference',
           },
-          {to: '/docs/guides/guide', label: 'Guides', position: 'left'},
+          {to: '/docs/guide', label: 'Guides', position: 'left'},
           {
             href: 'https://github.com/PaysecureCommunity/paysecure-docs',
             label: 'GitHub',
@@ -76,7 +76,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             items: [
               {
                 label: 'Guides',
-                to: '/docs/guide/guide',
+                to: '/docs/guide',
               },
               {
                 label: 'GitHub',
