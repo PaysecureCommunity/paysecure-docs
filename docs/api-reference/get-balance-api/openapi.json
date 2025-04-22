@@ -1,0 +1,187 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Check Balance API",
+      "version": "1.0.0",
+      "description": "API for checking payout balances across different payment methods"
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1"
+      }
+    ],
+    "paths": {
+      "/#getBalance": {
+        "get": {
+          "summary": "Retrieve account balance information",
+          "description": "Get balance for specific currency or all currencies associated with the account",
+          "operationId": "getBalance",
+          "parameters": [
+            {
+              "name": "paymentMethod",
+              "in": "query",
+              "required": true,
+              "description": "Payment method type",
+              "schema": {
+                "type": "string",
+                "enum": ["INTERAC", "FAWRYPAY", "UPI", "BANK_TRANSFER"]
+              },
+              "example": "FAWRYPAY"
+            },
+            {
+              "name": "currency",
+              "in": "query",
+              "required": false,
+              "description": "Currency code (ISO 4217)",
+              "schema": {
+                "type": "string"
+              },
+              "example": "CAD"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful balance response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/SingleCurrencyBalance"
+                      },
+                      {
+                        "$ref": "#/components/schemas/AllCurrenciesBalance"
+                      }
+                    ]
+                  },
+                  "examples": {
+                    "singleCurrency": {
+                      "value": {
+                        "balance": 1500.00,
+                        "currency": "CAD"
+                      }
+                    },
+                    "allCurrencies": {
+                      "value": {
+                        "paymentMethod": "FAWRYPAY",
+                        "status": "success",
+                        "data": [
+                          {
+                            "currency": "AUD",
+                            "balance": "0.00"
+                          },
+                          {
+                            "currency": "CAD",
+                            "balance": "0.00"
+                          },
+                          {
+                            "currency": "EGP",
+                            "balance": "-1.20"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer"
+        }
+      },
+      "schemas": {
+        "BalanceRequest": {
+          "type": "object",
+          "properties": {
+            "paymentMethod": {
+              "type": "string",
+              "enum": ["INTERAC", "FAWRYPAY", "UPI", "BANK_TRANSFER"],
+              "description": "Payment method type"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code (ISO 4217)",
+              "example": "CAD"
+            }
+          },
+          "required": ["paymentMethod"]
+        },
+        "SingleCurrencyBalance": {
+          "type": "object",
+          "properties": {
+            "balance": {
+              "type": "number",
+              "format": "float",
+              "description": "Available balance"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code"
+            }
+          }
+        },
+        "AllCurrenciesBalance": {
+          "type": "object",
+          "properties": {
+            "paymentMethod": {
+              "type": "string",
+              "description": "Payment method used for query"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["success", "error"]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CurrencyBalance"
+              }
+            }
+          }
+        },
+        "CurrencyBalance": {
+          "type": "object",
+          "properties": {
+            "currency": {
+              "type": "string",
+              "description": "Currency code"
+            },
+            "balance": {
+              "type": "string",
+              "description": "Formatted balance amount"
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error type"
+            },
+            "message": {
+              "type": "string",
+              "description": "Error description"
+            }
+          }
+        }
+      }
+    }
+  } 

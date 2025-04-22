@@ -1,0 +1,67 @@
+---
+title: 'Get Payout Status'
+description: Learn how to use the `get-status` API endpoint to retrieve payout details, including history and status.
+openapi: 'openapi GET /getpayout/{payoutId}'
+---
+
+# Get Payout Status
+
+Retrieves the status and details of a payout using the payout ID.
+
+## Endpoint
+
+```http
+GET /getpayout/{payoutId}
+
+Path Parameter
+payoutId (string, required): Unique identifier for the payout transaction.
+
+Responses
+✅ 200 OK - Payout status retrieved successfully
+```json
+{
+  "payoutId": "12345",
+  "status": "paid",
+  "amount": 150.75,
+  "currency": "USD",
+  "updated_on": 1710112233,
+  "created_on": 1710100000,
+  "payoutMethod": "bank_transfer",
+  "beneficiaryDetail": {
+    "bankName": "Bank of America",
+    "bankAccountName": "John Doe",
+    "bankAccountNumber": "123456789",
+    "bankCountryCode": "US",
+    "swiftCode": "BOFAUS3N",
+    "routing_param": {
+      "bankCode": "BOFA",
+      "bankBranchCode": "1234"
+    }
+  },
+  "status_history": [
+    {
+      "status": "payout_in_process",
+      "timestamp": 1710105000
+    },
+    {
+      "status": "paid",
+      "timestamp": 1710112233
+    }
+  ]
+}
+```
+❌ 400 Bad Request - Invalid request parameters
+```json
+{
+  "error": "Invalid payout ID",
+  "message": "The payout ID provided does not exist."
+}
+```
+
+❌ 404 Not Found - Payout not found
+```json
+{
+  "error": "Payout not found",
+  "message": "No payout found with the given ID."
+}
+```

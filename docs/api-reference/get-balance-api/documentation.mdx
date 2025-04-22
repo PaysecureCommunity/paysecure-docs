@@ -1,0 +1,95 @@
+---
+title: Check Balance API
+description: API for checking payout balances across different payment methods
+openapi: 'openapi POST /getBalance'
+---
+
+# Check Balance API
+
+## Overview
+The Check Balance API allows merchants to retrieve current balance information for their payout accounts. This endpoint supports checking balances for specific currencies or across all currencies associated with the account.
+
+---
+
+## Get Balance
+### Endpoint:
+**GET** `/api/v1/getBalance/`
+
+### Query Parameters:
+| Parameter        | Required | Description                                                                 |
+|------------------|----------|-----------------------------------------------------------------------------|
+| `paymentMethod`  | Yes      | Payment method type (e.g. "INTERAC", "FAWRYPAY", "UPI")                   |
+| `currency`       | No       | Currency code (e.g. "USD", "CAD", "EGP"). Omit to get all currency balances |
+
+### Example Request:
+```
+GET /api/v1/getBalance/?paymentMethod=FAWRYPAY&currency=CAD
+```
+
+### Response Example (Specific Currency):
+```json
+{
+  "balance": 1500.00,
+  "currency": "CAD"
+}
+```
+
+### Response Example (All Currencies):
+```json
+{
+  "paymentMethod": "FAWRYPAY",
+  "status": "success",
+  "data": [
+    {
+      "currency": "AUD",
+      "balance": "0.00"
+    },
+    {
+      "currency": "CAD",
+      "balance": "0.00"
+    },
+    {
+      "currency": "EGP",
+      "balance": "-1.20"
+    },
+    {
+      "currency": "EUR",
+      "balance": "0.00"
+    },
+    {
+      "currency": "GBP",
+      "balance": "0.00"
+    },
+    {
+      "currency": "INR",
+      "balance": "0.00"
+    },
+    {
+      "currency": "NGN",
+      "balance": "0.00"
+    },
+    {
+      "currency": "USD",
+      "balance": "0.00"
+    },
+    {
+      "currency": "ZAR",
+      "balance": "0.00"
+    }
+  ]
+}
+```
+
+---
+
+## Possible Payment Methods
+- `INTERAC` - For Canadian Interac e-Transfers
+- `FAWRYPAY` - For Egyptian Fawry payments
+- `UPI` - For Indian Unified Payments Interface
+- `BANK_TRANSFER` - For international bank transfers
+
+---
+
+> 📘 **Note:** 
+> - When no currency is specified, the API returns balances for all available currencies associated with the account
+> - Balances are updated in real-time and reflect available funds for immediate payouts

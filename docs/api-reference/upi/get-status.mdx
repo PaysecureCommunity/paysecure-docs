@@ -1,0 +1,47 @@
+---
+title: 'UPI PayOut'
+description: Learn how to use the `payout` API endpoint for processing UPI transactions.
+openapi: 'openapi GET /getpayout/{payoutId}'
+---
+
+### Get Payout Status
+
+Retrieves the status of a payout using the payout ID.
+
+#### Path Parameter
+
+- `payoutId` (string, required): Unique identifier for the payout transaction.
+
+#### Responses
+
+- **200 OK**: Payout status retrieved successfully
+
+```json
+{
+  "status": "paid",
+  "payoutId": "12345"
+}
+```
+
+- **400 Bad Request**: Invalid request parameters
+
+```json
+{
+  "error": "Invalid payout ID",
+  "message": "The payout ID provided does not exist."
+}
+```
+
+## Authentication
+
+All requests require authentication via a Bearer token in the `Authorization` header:
+
+```http
+Authorization: Bearer <your_token>
+```
+
+## Security
+
+The API uses Bearer authentication to ensure secure transactions.
+
+---

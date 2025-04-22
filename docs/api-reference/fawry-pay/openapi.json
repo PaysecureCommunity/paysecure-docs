@@ -1,0 +1,213 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure API",
+      "version": "1.0.0",
+      "description": "API for Paysecure's Fawry PayIn and PayOut services."
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1"
+      }
+    ],
+    "paths": {
+      "/#purchases": {
+        "post": {
+          "summary": "Create a Purchase",
+          "operationId": "createPurchase",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Purchase created successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PurchaseResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/purchases/{purchaseId}": {
+        "get": {
+          "summary": "Get Purchase Status",
+          "operationId": "getPurchaseStatus",
+          "parameters": [
+            {
+              "name": "purchaseId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Purchase status retrieved successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PurchaseResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/#payout": {
+        "post": {
+          "summary": "Create a PayOut",
+          "operationId": "createPayout",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Payout initiated successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PayoutResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/getpayout/{payoutId}/": {
+        "get": {
+          "summary": "Get PayOut Status",
+          "operationId": "getPayoutStatus",
+          "parameters": [
+            {
+              "name": "payoutId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Payout status retrieved successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PayoutResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/getBalance": {
+        "post": {
+          "summary": "Check Balance",
+          "operationId": "checkBalance",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Balance retrieved successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BalanceResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PurchaseRequest": {
+          "type": "object",
+          "properties": {
+            "client": { "type": "object" },
+            "purchase": { "type": "object" },
+            "paymentMethod": { "type": "string" },
+            "brand_id": { "type": "string" },
+            "success_redirect": { "type": "string" },
+            "failure_redirect": { "type": "string" },
+            "success_callback": { "type": "string" },
+            "failure_callback": { "type": "string" }
+          }
+        },
+        "PurchaseResponse": {
+          "type": "object",
+          "properties": {
+            "purchaseId": { "type": "string" },
+            "status": { "type": "string" },
+            "checkout_url": { "type": "string" }
+          }
+        },
+        "PayoutRequest": {
+          "type": "object",
+          "properties": {
+            "client": { "type": "object" },
+            "purpose": { "type": "string" },
+            "currency": { "type": "string" },
+            "payoutMethod": { "type": "string" },
+            "amount": { "type": "number" },
+            "success_callback": { "type": "string" },
+            "failure_callback": { "type": "string" }
+          }
+        },
+        "PayoutResponse": {
+          "type": "object",
+          "properties": {
+            "payoutId": { "type": "string" },
+            "status": { "type": "string" }
+          }
+        },
+        "BalanceRequest": {
+          "type": "object",
+          "properties": {
+            "paymentMethod": { "type": "string" }
+          }
+        },
+        "BalanceResponse": {
+          "type": "object",
+          "properties": {
+            "balance": { "type": "number" },
+            "currency": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+  

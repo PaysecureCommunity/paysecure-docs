@@ -1,0 +1,573 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure API - PIX Payments",
+      "description": "API for processing PIX payments in Brazil",
+      "version": "1.0.0",
+      "contact": {
+        "name": "Paysecure Support",
+        "url": "https://developer.paysecure.net",
+        "email": "support@paysecure.net"
+      }
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1",
+        "description": "Production Server"
+      }
+    ],
+    "paths": {
+      "/purchases": {
+        "post": {
+          "summary": "Create a PIX payment",
+          "description": "Creates a new PIX payment transaction",
+          "operationId": "createPixPayment",
+          "tags": ["PIX"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PixPaymentRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful operation",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PixPaymentResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PixPaymentRequest": {
+          "type": "object",
+          "required": [
+            "client",
+            "purchase",
+            "paymentMethod",
+            "brand_id"
+          ],
+          "properties": {
+            "client": {
+              "type": "object",
+              "required": [
+                "email",
+                "full_name",
+                "tax_number"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "description": "Client's email address",
+                  "example": "test@gmail.com"
+                },
+                "full_name": {
+                  "type": "string",
+                  "description": "Client's full name",
+                  "example": "test test"
+                },
+                "tax_number": {
+                  "type": "string",
+                  "description": "Client's tax identification number (CPF for individuals or CNPJ for companies)",
+                  "example": "39933551809"
+                }
+              }
+            },
+            "purchase": {
+              "type": "object",
+              "required": [
+                "currency",
+                "products"
+              ],
+              "properties": {
+                "currency": {
+                  "type": "string",
+                  "description": "Currency code (ISO 4217)",
+                  "example": "BRL"
+                },
+                "products": {
+                  "type": "array",
+                  "description": "List of products being purchased",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "price"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Product name",
+                        "example": "test"
+                      },
+                      "price": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Product price",
+                        "example": 10
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "paymentMethod": {
+              "type": "string",
+              "description": "Payment method (must be PIX for this endpoint)",
+              "enum": ["PIX"],
+              "example": "PIX"
+            },
+            "merchantRef": {
+              "type": "string",
+              "description": "Merchant reference for the transaction",
+              "example": "test12"
+            },
+            "brand_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Brand identifier",
+              "example": "90ed108b-6753-465d-8a21-e2cc604ff814"
+            },
+            "success_redirect": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to redirect on successful payment",
+              "example": "https://test.com/getResponse.jsp?success=true"
+            },
+            "failure_redirect": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to redirect on failed payment",
+              "example": "https://test.com/getResponse.jsp?success=false"
+            },
+            "success_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for success callback notification",
+              "example": "https://test1.com"
+            },
+            "failure_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for failure callback notification",
+              "example": "https://test2.com"
+            }
+          }
+        },
+        "PixPaymentResponse": {
+          "type": "object",
+          "properties": {
+            "purchaseId": {
+              "type": "string",
+              "description": "Unique identifier for the purchase",
+              "example": "65f9368cb905381ba207b3c4"
+            },
+            "client": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "description": "Client's email address",
+                  "example": "test@gmail.com"
+                },
+                "full_name": {
+                  "type": "string",
+                  "description": "Client's full name",
+                  "example": "Test test"
+                },
+                "tax_number": {
+                  "type": "string",
+                  "description": "Client's tax identification number",
+                  "example": "39933551809"
+                }
+              }
+            },
+            "updated_on": {
+              "type": "integer",
+              "format": "int64",
+              "description": "Timestamp of last update (Unix timestamp)",
+              "example": 1710831244
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of transaction",
+              "example": "purchase"
+            },
+            "paymentMethod": {
+              "type": "string",
+              "description": "Payment method used",
+              "example": "PIX"
+            },
+            "amountUnit": {
+              "type": "string",
+              "description": "Unit of the amount (MAJOR or MINOR)",
+              "example": "MAJOR"
+            },
+            "errorMsg": {
+              "type": "string",
+              "description": "Error message if any",
+              "example": ""
+            },
+            "redirectType": {
+              "type": "string",
+              "description": "Type of redirect",
+              "example": "POST"
+            },
+            "force_recurring": {
+              "type": "boolean",
+              "description": "Whether recurring payment is forced",
+              "example": false
+            },
+            "created_on": {
+              "type": "integer",
+              "format": "int64",
+              "description": "Timestamp of creation (Unix timestamp)",
+              "example": 1710831244
+            },
+            "merchantRef": {
+              "type": "string",
+              "description": "Merchant reference for the transaction",
+              "example": "65f9368cb905381ba207b3c4"
+            },
+            "merchantName": {
+              "type": "string",
+              "description": "Name of the merchant",
+              "example": "test"
+            },
+            "purchase": {
+              "type": "object",
+              "properties": {
+                "currency": {
+                  "type": "string",
+                  "description": "Currency code",
+                  "example": "USD"
+                },
+                "products": {
+                  "type": "array",
+                  "description": "List of products",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "price": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Product price",
+                        "example": 10
+                      }
+                    }
+                  }
+                },
+                "total": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "Total purchase amount",
+                  "example": 10
+                },
+                "language": {
+                  "type": "string",
+                  "description": "Language code",
+                  "example": "en"
+                },
+                "total_formatted": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "Formatted total amount",
+                  "example": 1
+                },
+                "timezone": {
+                  "type": "string",
+                  "description": "Timezone",
+                  "example": "MIT"
+                }
+              }
+            },
+            "issuer_details": {
+              "type": "object",
+              "properties": {
+                "bank_accounts": {
+                  "type": "array",
+                  "description": "Bank account details",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "bank_account": {
+                        "type": "string",
+                        "description": "Bank account number",
+                        "example": ""
+                      },
+                      "bank_code": {
+                        "type": "string",
+                        "description": "Bank code",
+                        "example": ""
+                      }
+                    }
+                  }
+                },
+                "legal_name": {
+                  "type": "string",
+                  "description": "Legal name of the issuer",
+                  "example": "newbrand"
+                },
+                "brand_name": {
+                  "type": "string",
+                  "description": "Brand name of the issuer",
+                  "example": "newbrand"
+                }
+              }
+            },
+            "transaction_data": {
+              "type": "object",
+              "description": "Additional transaction data"
+            },
+            "status": {
+              "type": "string",
+              "description": "Current status of the transaction",
+              "example": "CREATED"
+            },
+            "status_history": {
+              "type": "array",
+              "description": "History of status changes",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "Status value",
+                    "example": "created"
+                  },
+                  "timestamp": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Timestamp of status change",
+                    "example": 1710831244
+                  }
+                }
+              }
+            },
+            "pix_payload": {
+              "type": "object",
+              "description": "PIX payment details",
+              "properties": {
+                "payload": {
+                  "type": "string",
+                  "description": "PIX payload string for payment",
+                  "example": "00020101021226800014br.gov.bcb.pix2558pix.asaas.com/qr/cobv/e3eb36eb-7e9b-404d-9bd3-b486a42da3445204000053039865802BR5925A55 CONSULTORIA EM CREDIT6009Sao Paulo61080455202062070503***630451CA"
+                },
+                "qr_code": {
+                  "type": "string",
+                  "description": "Base64 encoded QR code image",
+                  "example": "iVBORw0KGgoAAAANSUhEUgAAAZ8AAAGfCAIAAAAPgEjDAAAP4UlEQVR42u3bUY7cSA4EUN..."
+                },
+                "expiration_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Expiration date of the PIX payment",
+                  "example": "2025-03-27 23:59:59"
+                }
+              }
+            },
+            "is_test": {
+              "type": "boolean",
+              "description": "Whether this is a test transaction",
+              "example": false
+            },
+            "brand_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Brand identifier",
+              "example": "90ed108b-6753-465d-8a21-e2cc604ff814"
+            },
+            "send_receipt": {
+              "type": "boolean",
+              "description": "Whether to send receipt",
+              "example": false
+            },
+            "is_recurring_token": {
+              "type": "boolean",
+              "description": "Whether this is a recurring token",
+              "example": false
+            },
+            "skip_capture": {
+              "type": "boolean",
+              "description": "Whether to skip capture",
+              "example": false
+            },
+            "reference_generated": {
+              "type": "string",
+              "description": "Generated reference",
+              "example": "PS2696"
+            },
+            "issued": {
+              "type": "string",
+              "format": "date",
+              "description": "Issue date",
+              "example": "2024-03-19"
+            },
+            "due": {
+              "type": "integer",
+              "format": "int64",
+              "description": "Due timestamp",
+              "example": 1710831244
+            },
+            "refund_upto": {
+              "type": "number",
+              "format": "float",
+              "description": "Maximum refund amount",
+              "example": 0
+            },
+            "cc_descriptor": {
+              "type": "string",
+              "description": "Credit card descriptor",
+              "example": ""
+            },
+            "fraudScore": {
+              "type": "string",
+              "description": "Fraud score",
+              "example": "NA"
+            },
+            "trustScore": {
+              "type": "string",
+              "description": "Trust score",
+              "example": "NA"
+            },
+            "refund_availability": {
+              "type": "string",
+              "description": "Refund availability status",
+              "example": "NONE"
+            },
+            "refundable_amount": {
+              "type": "number",
+              "format": "float",
+              "description": "Amount that can be refunded",
+              "example": 0
+            },
+            "success_redirect": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to redirect on successful payment",
+              "example": "https://test.com/getResponse.jsp?success=true"
+            },
+            "failure_redirect": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to redirect on failed payment",
+              "example": "https://test.com/getResponse.jsp?success=false"
+            },
+            "cancel_redirect": {
+              "type": "string",
+              "description": "URL to redirect on cancelled payment",
+              "example": ""
+            },
+            "success_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for success callback notification",
+              "example": "https://test1.com"
+            },
+            "failure_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for failure callback notification",
+              "example": "https://test2.com"
+            },
+            "platform": {
+              "type": "string",
+              "description": "Platform used for the transaction",
+              "example": "API"
+            },
+            "created_from_ip": {
+              "type": "string",
+              "format": "ipv4",
+              "description": "IP address from which the transaction was created",
+              "example": "223.182.100.34"
+            },
+            "checkout_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for checkout page",
+              "example": "https://api.paysecure.net/payments/65f9368cb905381ba207b3c4/"
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "error_code": {
+              "type": "string",
+              "description": "Error code"
+            },
+            "status": {
+              "type": "integer",
+              "description": "HTTP status code"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT",
+          "description": "Bearer token authentication"
+        }
+      }
+    },
+    "tags": [
+      {
+        "name": "PIX",
+        "description": "PIX payment operations"
+      }
+    ]
+  }

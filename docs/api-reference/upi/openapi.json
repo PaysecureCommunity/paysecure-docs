@@ -1,0 +1,208 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure API",
+      "version": "1.0.0",
+      "description": "API for processing PayIns and PayOuts via Paysecure."
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1"
+      }
+    ],
+    "paths": {
+      "/purchases": {
+        "post": {
+          "summary": "Create a new purchase",
+          "operationId": "createPurchase",
+          "tags": ["PayIn"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePurchaseRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Purchase created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreatePurchaseResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [{ "bearerAuth": [] }]
+        }
+      },
+      "/#payout": {
+        "post": {
+          "summary": "Create a new payout",
+          "operationId": "createPayout",
+          "tags": ["PayOut"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayoutRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Payout created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreatePayoutResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [{ "bearerAuth": [] }]
+        }
+      },
+      "/getpayout/{payoutId}": {
+        "get": {
+          "summary": "Get Payout Status",
+          "operationId": "getPayoutStatus",
+          "tags": ["PayOut"],
+          "parameters": [
+            {
+              "name": "payoutId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Payout status retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetPayoutStatusResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [{ "bearerAuth": [] }]
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer"
+        }
+      },
+      "schemas": {
+        "CreatePurchaseRequest": {
+          "type": "object",
+          "required": ["client", "purchase", "paymentMethod", "brand_id"],
+          "properties": {
+            "client": { "$ref": "#/components/schemas/ClientDetails" },
+            "purchase": { "$ref": "#/components/schemas/PurchaseDetails" },
+            "paymentMethod": { "type": "string", "example": "UPI" },
+            "brand_id": { "type": "string", "example": "c4003b2c-22d4-4dc1-ad0c-c6b54f8c9636" }
+          }
+        },
+        "CreatePayoutRequest": {
+          "type": "object",
+          "required": ["client", "beneficiaryDetail", "currency", "amount", "payoutMethod"],
+          "properties": {
+            "client": { "$ref": "#/components/schemas/ClientDetails" },
+            "beneficiaryDetail": { "$ref": "#/components/schemas/BeneficiaryDetails" },
+            "currency": { "type": "string", "example": "INR" },
+            "amount": { "type": "number", "example": 100 },
+            "payoutMethod": { "type": "string", "example": "Payout-UPI" }
+          }
+        },
+        "GetPayoutStatusResponse": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "example": "paid" },
+            "payoutId": { "type": "string", "example": "12345" }
+          }
+        },
+        "ClientDetails": {
+          "type": "object",
+          "required": ["email", "phone", "full_name", "country"],
+          "properties": {
+            "email": { "type": "string", "format": "email" },
+            "phone": { "type": "string" },
+            "full_name": { "type": "string" },
+            "country": { "type": "string" }
+          }
+        },
+        "BeneficiaryDetails": {
+          "type": "object",
+          "required": ["transferType"],
+          "properties": {
+            "transferType": { "type": "string", "enum": ["IMPS", "UPI", "RTGS", "NEFT"] },
+            "ifscCode": { "type": "string" },
+            "payeeName": { "type": "string" },
+            "bankAccountNumber": { "type": "string" },
+            "UPIid": { "type": "string" }
+          }
+        },
+        "CreatePayoutResponse": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string", "example": "success" },
+            "payout_id": { "type": "string", "example": "12345" }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        }
+      }
+    }
+}

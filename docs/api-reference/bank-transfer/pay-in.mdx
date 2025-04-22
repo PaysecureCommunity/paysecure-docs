@@ -1,0 +1,235 @@
+---
+title: 'Bank Transfer PayIn'
+description: Learn how to use the `createPurchase` API endpoint for processing Bank Transfer transactions.
+openapi: 'openapi POST /purchases'
+---
+
+## Understanding `createPurchase`
+
+The `createPurchase` API allows merchants to initiate a purchase transaction via Paysecure. It supports various payment methods, and provides necessary details for checkout.
+
+### Parameters:
+- `client` (object) - User details.
+  - `email` (string) - Identifier for the user.
+  - `full_name` (string) - Full name of the user.
+  - `street_address` (string) - User's street address.
+  - `city` (string) - City of the user.
+  - `stateCode` (string) - State code (ISO standard).
+  - `country` (string) - Country code (ISO-3166).
+  - `zip_code` (string) - Postal code of the user.
+  - `currency` (string) - Currency of the transaction (e.g., INR, USD).
+  - `brand_id` (string) - Merchant brand identifier.
+  - `success_redirect` (string) - URL to redirect the user after a successful transaction.
+  - `failure_redirect` (string) - URL to redirect the user if the transaction fails.
+  - `merchantRef` (string) - Strongly advised for preventing duplicate transactions and retrieving transaction details.
+
+
+<Warning>Authorization requires an API key in the `X-API-Key` header.</Warning>
+
+***
+
+## Query example
+
+```javascript JavaScript
+const axios = require("axios");
+(async () => {
+  const response = await axios.post(
+    "https://staging.paysecure.net/api/v1/purchases",
+    {
+  "client": {
+    "email": "test@gmail.com",
+    "street_address": "10 New Burlington Street Apt. 214",
+    "city": "London",
+    "full_name": "Test test",
+    "zip_code": "W1S 3BE",
+    "country": "GB",
+    "date_of_birth": "1970-07-10",
+    "stateCode": "QLD",
+    "phone": "+447755564318"
+  },
+  "purchase": {
+    "currency" : "USD",
+    "products": [
+      {
+        "name": "test ",
+        "price": 10
+      }
+    ]
+  },
+  "paymentMethod" : "BANKTRANSFER",
+  "brand_id": "90ed108b-6753-465d-8a21-e2cc604ff814 ",
+  "success_redirect": "https://your.success.redirect.com/getResponse.jsp?success=true",
+  "failure_redirect": "https://your.failure.redirect.com/getResponse.jsp?success=false",
+  "success_callback": "https://your.success.callback.com",
+  "failure_callback": "https://your.failure.callback.com",
+   "signature": "RShYJXst+wi8yPMAi/PSqV4JkJpTrXrl9yRYPUiagrSqBNMXEPndEQD6gnKQYq1syKW7B/s7XmRmnzWnB2QDCBHjtv/ZAg4o5lDmOIPDjVdIgHpZ8EMOvF/O/64D9JaLRViIrjSM/kPiAKbxWsoQtmKumfcly7hwL50iZNUovp3jnzoGtOTWLkbUTDk4xPH1OrAwVUeqkmYFgD9bkQZ/MgSB+p/0ahRskx6jjNlKlG1vujk1dWckgw35CwLJwThx/ZW52kpAp+3GwDaANic0vV3dJOhsqpW8+3G0tIiL4+8FBFAFb31jM6K7CpjuI1lwFZoa4+mQEw+/xLBMiDjPyQ=="
+}
+{
+    "purchaseId": "66334635a2cf2a7da7b192ab",
+    "client": {
+        "bank_account": "",
+        "bank_code": "",
+        "email": "test3@gmail.com",
+        "phone": "+447755564318",
+        "full_name": "",
+        "date_of_birth": "1970-07-10",
+        "personal_code": "",
+        "street_address": "asdfsa",
+        "country": "GB",
+        "city": "a",
+        "zip_code": "W1S 3BE",
+        "shipping_street_address": "",
+        "shipping_country": "",
+        "shipping_city": "",
+        "shipping_zip_code": "",
+        "cc": [],
+        "bcc": [],
+        "legal_name": "",
+        "brand_name": "",
+        "registration_number": "",
+        "tax_number": "",
+        "documentId": "",
+        "documentType": "",
+        "bankAccountNumber": "",
+        "bankAccount": "",
+        "bankCode": "",
+        "description": "",
+        "stateCode": "QLD"
+    },
+    "updated_on": 1714636341,
+    "type": "purchase",
+    "paymentMethod": "BANKTRANSFER",
+    "amountUnit": "MAJOR",
+    "errorMsg": "",
+    "redirectType": "GET",
+    "force_recurring": false,
+    "created_on": 1714636341,
+    "merchantRef": "66334635a2cf2a7da7b192ab",
+    "merchantName": "merchant002",
+    "feesDeducted": 0.3,
+    "purchaseIdShortCode": “4000013",
+    "purchase": {
+        "currency": "JPY",
+        "products": [
+            {
+                "name": "test",
+                "quantity": 1.0,
+                "price": 5000.0,
+                "discount": 0,
+                "tax_percent": "0.00"
+            }
+        ],
+        "total": 5000.0,
+        "language": "en",
+        "notes": "",
+        "debt": 0,
+        "total_formatted": 1.0,
+        "request_client_details": [],
+        "timezone": "MIT",
+        "email_message": ""
+    },
+    "payment": {
+        "is_outgoing": false,
+        "payment_type": "PURCHASE",
+        "amount": 5000.0,
+        "currency": "JPY",
+        "net_amount": 5000.0,
+        "fee_amount": 0.0,
+        "pending_amount": 0.0,
+        "pending_unfreeze_on": null,
+        "description": "",
+        "paid_on": 1714636341,
+        "remote_paid_on": 1714636341
+    },
+    "issuer_details": {
+        "website": "",
+        "legal_street_address": "",
+        "legal_country": "",
+        "legal_city": "",
+        "legal_zip_code": "",
+        "bank_accounts": [
+            {
+                "bank_account": "",
+                "bank_code": ""
+            }
+        ],
+        "legal_name": "gdhnb",
+        "brand_name": "gdhnb",
+        "registration_number": "",
+        "tax_number": ""
+    },
+    "transaction_data": {
+        "payment_method": "",
+        "flow": "payform",
+        "extra": {
+            "amount": 5000.0,
+            "masked_pan": "BANKTRANSFER"
+        },
+        "country": "",
+        "attempts": [
+            {
+                "client_ip": "103.59.75.41",
+                "type": "execute",
+                "payment_method": "BANKTRANSFER",
+                "flow": "payform",
+                "successful": true,
+                "country": "BANKTRANSFER",
+                "processing_time": 1714636341,
+                "extra": {
+                    "amount": 5000.0,
+                    "masked_pan": "BANKTRANSFER"
+                }
+            }
+        ]
+    },
+    "status": "PAYMENT_IN_PROCESS",
+    "status_history": [
+        {
+            "status": "created",
+            "timestamp": 1714636341
+        },
+        {
+            "status": "pending_execute",
+            "timestamp": 1714636341
+        },
+        {
+            "status": "payment_in_process",
+            "timestamp": 1714636341
+        }
+    ],
+    "is_test": false,
+    "brand_id": "76fad4ea-2ba2-4511-8989-3bed04e7d5bb",
+    "send_receipt": false,
+    "is_recurring_token": false,
+    "skip_capture": false,
+    "reference_generated": "PS8937",
+    "issued": "2024-05-02",
+    "due": 1714636341,
+    "refund_upto": 0,
+    "cc_descriptor": "",
+    "fraudScore": "NA",
+    "trustScore": "NA",
+    "payInBankDetails": {
+        "accountName": "ｴｱｰｳｵﾚﾂｸｽｼﾞｬﾊﾟﾝｶﾌﾞｼｷｶｲｼｬ",
+        "accountNumber": "3194368",
+        "bankName": "MUFG BANK, LTD. 三菱UFJ銀行",
+        "swiftCode": "BOTKJPJT",
+        "branchName": "ワカタケ",
+        "accountType": "CHECKING",
+        "payment_routing_parameters": {
+            "BANK_CODE": "0005",
+            "BRANCH_CODE": "809"
+        }
+    },
+    "refund_availability": "NONE",
+    "refundable_amount": 0.0,
+    "success_redirect": "https://test.com/getResponse.jsp?success=true",
+    "failure_redirect": "https://test.com/getResponse.jsp?success=false",
+    "cancel_redirect": "",
+    "success_callback": "https://test1.com",
+    "failure_callback": "https://test2.com",
+    "platform": "API",
+    "created_from_ip": "103.59.75.41",
+    "checkout_url": "https://staging.paysecure.net/payments/66334635a2cf2a7da7b192ab/"
+}
+``` 

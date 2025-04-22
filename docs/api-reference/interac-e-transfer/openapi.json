@@ -1,0 +1,419 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Interac e-Transfer PayIn API",
+      "description": "API for processing payments using Interac e-Transfer in Canada.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net",
+        "description": "Production Server"
+      }
+    ],
+    "paths": {
+      "/#purchases": {
+        "post": {
+          "summary": "Create a new Interac e-Transfer purchase",
+          "description": "Initiates a PayIn (deposit/collections) transaction using Interac e-Transfer.",
+          "operationId": "createPurchase",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseRequest"
+                },
+                "examples": {
+                  "standard": {
+                    "summary": "Standard Purchase Request",
+                    "value": {
+                      "client": {
+                        "email": "john.doe@example.com",
+                        "street_address": "123 Maple Street",
+                        "city": "Toronto",
+                        "full_name": "John Doe",
+                        "zip_code": "M5V 2N4",
+                        "country": "CA",
+                        "stateCode": "ON",
+                        "phone": "+14165551234",
+                        "gender": "MALE",
+                        "date_of_birth": "1985-07-15"
+                      },
+                      "purchase": {
+                        "currency": "CAD",
+                        "products": [
+                          {
+                            "name": "Premium Subscription",
+                            "price": 49.99
+                          }
+                        ]
+                      },
+                      "paymentMethod": "Interac-e-Transfer",
+                      "brand_id": "your-brand-id-here",
+                      "success_redirect": "https://your-website.com/success",
+                      "failure_redirect": "https://your-website.com/failure",
+                      "success_callback": "https://your-website.com/api/webhooks/success",
+                      "failure_callback": "https://your-website.com/api/webhooks/failure"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Purchase created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PurchaseResponse"
+                  },
+                  "example": {
+                    "purchaseId": "61f8c0a5e4b06a7c9d1e2f3a",
+                    "client": {
+                      "email": "john.doe@example.com",
+                      "phone": "+14165551234",
+                      "full_name": "John Doe",
+                      "date_of_birth": "1985-07-15",
+                      "street_address": "123 Maple Street",
+                      "country": "CA",
+                      "city": "Toronto",
+                      "zip_code": "M5V 2N4",
+                      "stateCode": "ON"
+                    },
+                    "status": "PAYMENT_IN_PROCESS",
+                    "purchase": {
+                      "currency": "CAD",
+                      "products": [
+                        {
+                          "name": "Premium Subscription",
+                          "price": 49.99
+                        }
+                      ],
+                      "total": 49.99
+                    },
+                    "payment": {
+                      "amount": 49.99,
+                      "currency": "CAD",
+                      "net_amount": 49.99
+                    },
+                    "checkout_url": "https://api.paysecure.net/payments/61f8c0a5e4b06a7c9d1e2f3a/",
+                    "success_redirect": "https://your-website.com/success",
+                    "failure_redirect": "https://your-website.com/failure"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request - Invalid parameters",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  },
+                  "example": {
+                    "error": {
+                      "code": "INVALID_REQUEST",
+                      "message": "Invalid request parameters",
+                      "details": [
+                        "client.country must be 'CA' for Interac e-Transfer",
+                        "purchase.currency must be 'CAD'"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized - Invalid or missing authentication",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  },
+                  "example": {
+                    "error": {
+                      "code": "UNAUTHORIZED",
+                      "message": "Authentication failed"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  },
+                  "example": {
+                    "error": {
+                      "code": "SERVER_ERROR",
+                      "message": "An unexpected error occurred"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Client": {
+          "type": "object",
+          "required": [
+            "email",
+            "street_address",
+            "city",
+            "full_name",
+            "zip_code",
+            "country",
+            "stateCode",
+            "phone"
+          ],
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Unique identifier for the user"
+            },
+            "street_address": {
+              "type": "string",
+              "description": "Street address of the client"
+            },
+            "city": {
+              "type": "string",
+              "description": "Customer's city"
+            },
+            "full_name": {
+              "type": "string",
+              "description": "Full name of the client"
+            },
+            "zip_code": {
+              "type": "string",
+              "description": "ZIP code of the client"
+            },
+            "country": {
+              "type": "string",
+              "description": "ISO-3166 Country Code (Must be uppercase, e.g., 'CA' for Interac)",
+              "enum": ["CA"]
+            },
+            "stateCode": {
+              "type": "string",
+              "description": "State code in uppercase (e.g., 'ON', 'BC')"
+            },
+            "phone": {
+              "type": "string",
+              "description": "Client's phone number"
+            },
+            "gender": {
+              "type": "string",
+              "enum": ["MALE", "FEMALE", "OTHER"],
+              "description": "Client's gender"
+            },
+            "date_of_birth": {
+              "type": "string",
+              "format": "date",
+              "description": "Client's date of birth in YYYY-MM-DD format"
+            }
+          }
+        },
+        "Product": {
+          "type": "object",
+          "required": [
+            "name",
+            "price"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Product name"
+            },
+            "price": {
+              "type": "number",
+              "format": "float",
+              "description": "Price in decimal format (e.g., 10.37)"
+            }
+          }
+        },
+        "Purchase": {
+          "type": "object",
+          "required": [
+            "currency",
+            "products"
+          ],
+          "properties": {
+            "currency": {
+              "type": "string",
+              "description": "ISO 4217 currency code (Should be 'CAD' for Interac)",
+              "enum": ["CAD"]
+            },
+            "products": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Product"
+              },
+              "minItems": 1
+            }
+          }
+        },
+        "PurchaseRequest": {
+          "type": "object",
+          "required": [
+            "client",
+            "purchase",
+            "brand_id",
+            "success_redirect",
+            "failure_redirect"
+          ],
+          "properties": {
+            "client": {
+              "$ref": "#/components/schemas/Client"
+            },
+            "purchase": {
+              "$ref": "#/components/schemas/Purchase"
+            },
+            "paymentMethod": {
+              "type": "string",
+              "description": "Specifies the payment solution used",
+              "enum": ["Interac-e-Transfer"]
+            },
+            "brand_id": {
+              "type": "string",
+              "description": "Obtainable from the merchant dashboard"
+            },
+            "success_redirect": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to redirect on success"
+            },
+            "failure_redirect": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to redirect on failure"
+            },
+            "success_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for success webhook callback"
+            },
+            "failure_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL for failure webhook callback"
+            },
+            "expireInMin": {
+              "type": "integer",
+              "description": "Time window for completing the payment before it expires",
+              "minimum": 1
+            },
+            "merchantRef": {
+              "type": "string",
+              "description": "Merchant reference for preventing duplicate transactions"
+            }
+          }
+        },
+        "Payment": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "number",
+              "format": "float"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "net_amount": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        },
+        "PurchaseResponse": {
+          "type": "object",
+          "properties": {
+            "purchaseId": {
+              "type": "string"
+            },
+            "client": {
+              "$ref": "#/components/schemas/Client"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["PAYMENT_IN_PROCESS", "PAYMENT_COMPLETED", "PAYMENT_FAILED"]
+            },
+            "purchase": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Purchase"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  }
+                }
+              ]
+            },
+            "payment": {
+              "$ref": "#/components/schemas/Payment"
+            },
+            "checkout_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "success_redirect": {
+              "type": "string",
+              "format": "uri"
+            },
+            "failure_redirect": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT",
+          "description": "Bearer token authentication"
+        }
+      }
+    }
+  } 

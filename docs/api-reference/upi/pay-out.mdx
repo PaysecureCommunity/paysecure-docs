@@ -1,0 +1,40 @@
+---
+title: 'UPI PayOut'
+description: Learn how to use the `payout` API endpoint for processing UPI transactions.
+openapi: 'openapi POST /payout'
+---
+
+
+Creates a new payout transaction.
+
+#### Request Body
+
+```json
+{
+  "client": { "email": "user@example.com", "phone": "1234567890", "full_name": "John Doe", "country": "IN" },
+  "beneficiaryDetail": { "transferType": "UPI", "UPIid": "user@upi" },
+  "currency": "INR",
+  "amount": 100,
+  "paymentMethod": "UPI"
+}
+```
+
+#### Responses
+
+- **200 OK**: Payout created successfully
+
+```json
+{
+  "status": "success",
+  "payout_id": "12345"
+}
+```
+
+- **400 Bad Request**: Invalid request parameters
+
+```json
+{
+  "error": "Invalid payout method",
+  "message": "The provided payout method is not supported."
+}
+```

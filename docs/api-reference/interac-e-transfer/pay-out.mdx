@@ -1,0 +1,345 @@
+---
+title: "Interac e-Transfer PayOut API"
+id: pay-out
+description: "API for processing payouts using Interac e-Transfer in Canada."
+openapi: "pay-out-openapi POST /payout"
+---
+
+## How It Works
+
+To initiate a payout, the merchant has to provide Paysecure with the PIX details, including the recipient's PIX key (e.g., CPF/CNPJ, phone number, or email), amount, and any additional information.
+
+If the merchant has enough balance, the transaction amount will be deducted from the merchant's balance and sent to the user.
+
+---
+
+## Key Steps
+
+### Flow
+
+#### **Initiation:**
+- **User initiates:** The process starts with a user requesting a payout from the merchant.
+- **Merchant approval:** If everything is OK, the merchant approves the payout request.
+
+#### **Processing:**
+- **Payment details:** Using Paysecure’s API, the merchant provides the recipient's Pix key (which can be a phone number, email, CPF/CNPJ, or random key) and the transfer amount.
+- **Funds check:** Paysecure verifies if sufficient funds are available in the merchant's account to cover the transfer.
+- **Processing & Key mapping:** The recipient's Pix key is validated using the DICT (Transactional Identifier Directory). This central database links Pix keys with users' bank accounts.
+
+#### **Payout:**
+- **Instant transfer:** If everything checks out, the payer's bank instantly transfers the funds to the recipient's bank account. The recipient typically receives confirmation messages from their respective bank about the successful transaction.
+
+---
+
+## INTERAC-E-TRANSFER Payout API
+
+### Overview
+The merchant requests the INTERAC-E-TRANSFER payout API to initiate a PayOut (withdrawal) transaction. The recipient will receive an email or SMS notification with instructions on how to deposit the funds to their bank account.
+
+### Authorization
+**Bearer Token**
+This API requires Bearer Token authentication, which can be retrieved from the Paysecure API Documentation - Live.
+
+### Endpoint
+**POST**: Create Payout  
+`https://staging.paysecure.net/api/v1/payouts/`
+
+### Required Parameters
+To generate a payout, you must provide the **Brand ID** (request body) and **API key** (header), both available in the merchant dashboard.
+
+#### Mandatory Parameters in Request Body:
+| Parameter | Notes |
+|-----------|-------|
+| `recipient.email` | Email address of the recipient |
+| `recipient.city` | Recipient's city |
+| `recipient.country` | ISO-3166 Country Code (Must be uppercase, e.g., "CA" for Interac) |
+| `recipient.stateCode` | State code in uppercase (e.g., "ON", "BC") |
+| `recipient.street_address` | Street address of the recipient |
+| `recipient.zip_code` | ZIP code of the recipient |
+| `recipient.phone` | Recipient's phone number |
+| `recipient.full_name` | Full name of the recipient |
+| `amount` | Amount to be paid out in decimal format (e.g., `49.99`) |
+| `currency` | ISO 4217 currency code (Should be 'CAD' for Interac) |
+| `payoutMethod` | Specifies the payout solution used (Should be 'Interac-e-Transfer') |
+| `brand_id` | Obtainable from the merchant dashboard |
+
+#### Optional Parameters:
+| Parameter | Notes |
+|-----------|-------|
+| `reference` | Merchant reference for the payout |
+| `description` | Description of the payout |
+| `success_callback` | URL for success webhook callback |
+| `failure_callback` | URL for failure webhook callback |
+
+### Example Request
+```json
+{
+  "recipient": {
+    "email": "john.doe@example.com",
+    "street_address": "123 Maple Street",
+    "city": "Toronto",
+    "full_name": "John Doe",
+    "zip_code": "M5V 2N4",
+    "country": "CA",
+    "stateCode": "ON",
+    "phone": "+14165551234"
+  },
+  "amount": 49.99,
+  "currency": "CAD",
+  "payoutMethod": "Interac-e-Transfer",
+  "brand_id": "your-brand-id-here",
+  "reference": "PAYOUT-REF-123456",
+  "description": "Withdrawal to John Doe",
+  "success_callback": "https://your-website.com/api/webhooks/payout/success",
+  "failure_callback": "https://your-website.com/api/webhooks/payout/failure"
+}
+```
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://api.paysecure.net/api/v1/payouts",
+    {
+      recipient: {
+        email: "john.doe@example.com",
+        street_address: "123 Maple Street",
+        city: "Toronto",
+        full_name: "John Doe",
+        zip_code: "M5V 2N4",
+        country: "CA",
+        stateCode: "ON",
+        phone: "+14165551234"
+      },
+      amount: 49.99,
+      currency: "CAD",
+      payoutMethod: "Interac-e-Transfer",
+      brand_id: "your-brand-id-here",
+      reference: "PAYOUT-REF-123456",
+      description: "Withdrawal to John Doe",
+      success_callback: "https://your-website.com/api/webhooks/payout/success",
+      failure_callback: "https://your-website.com/api/webhooks/payout/failure"
+    },
+    {
+      headers: {
+        "Authorization": "Bearer your-token-here",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### cURL Request
+```sh
+curl --location 'https://api.paysecure.net/api/v1/payouts' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer your-token-here' \
+--data-raw '{
+  "recipient": {
+    "email": "john.doe@example.com",
+    "street_address": "123 Maple Street",
+    "city": "Toronto",
+    "full_name": "John Doe",
+    "zip_code": "M5V 2N4",
+    "country": "CA",
+    "stateCode": "ON",
+    "phone": "+14165551234"
+  },
+  "amount": 49.99,
+  "currency": "CAD",
+  "payoutMethod": "Interac-e-Transfer",
+  "brand_id": "your-brand-id-here",
+  "reference": "PAYOUT-REF-123456",
+  "description": "Withdrawal to John Doe",
+  "success_callback": "https://your-website.com/api/webhooks/payout/success",
+  "failure_callback": "https://your-website.com/api/webhooks/payout/failure"
+}'
+```
+
+### Example Response
+```json
+{
+  "payoutId": "61f8c0a5e4b06a7c9d1e2f3c",
+  "recipient": {
+    "email": "john.doe@example.com",
+    "phone": "+14165551234",
+    "full_name": "John Doe",
+    "street_address": "123 Maple Street",
+    "country": "CA",
+    "city": "Toronto",
+    "zip_code": "M5V 2N4",
+    "stateCode": "ON"
+  },
+  "status": "PROCESSING",
+  "amount": 49.99,
+  "currency": "CAD",
+  "fee": 0.00,
+  "net_amount": 49.99,
+  "reference": "PAYOUT-REF-123456",
+  "description": "Withdrawal to John Doe",
+  "created_at": "2023-07-15T14:27:55Z"
+}
+```
+
+## Get Payout Status
+
+### Overview
+This endpoint allows you to retrieve all details of a payout, including its transaction history.
+
+### Endpoint
+**GET**: Get Payout Status  
+`https://api.paysecure.net/api/v1/payouts/{payoutId}/`
+
+### Required Parameters
+You need to pass the `payoutId` in the API URL.
+
+### Possible Status Values
+| Status | Notes |
+|--------|-------|
+| `PROCESSING` | Payout is being processed |
+| `COMPLETED` | Payout was successful |
+| `FAILED` | Payout has failed |
+
+### Error Details
+If there are any issues with the payout, you can get more details from the `transaction_data.attempts.error` attribute of the response object.
+
+### Headers
+| Header | Value |
+|--------|-------|
+| Content-Type | application/json |
+| Authorization | Bearer Token |
+
+### Example Request
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const payoutId = "61f8c0a5e4b06a7c9d1e2f3c";
+  
+  const response = await axios.get(
+    `https://api.paysecure.net/api/v1/payouts/${payoutId}`,
+    {
+      headers: {
+        "Authorization": "Bearer your-token-here",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### cURL Request
+```sh
+curl --location 'https://api.paysecure.net/api/v1/payouts/61f8c0a5e4b06a7c9d1e2f3c' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer your-token-here'
+```
+
+### Example Response (Successful Payout)
+```json
+{
+  "payoutId": "61f8c0a5e4b06a7c9d1e2f3c",
+  "recipient": {
+    "email": "john.doe@example.com",
+    "phone": "+14165551234",
+    "full_name": "John Doe",
+    "street_address": "123 Maple Street",
+    "country": "CA",
+    "city": "Toronto",
+    "zip_code": "M5V 2N4",
+    "stateCode": "ON"
+  },
+  "status": "COMPLETED",
+  "amount": 49.99,
+  "currency": "CAD",
+  "fee": 0.00,
+  "net_amount": 49.99,
+  "reference": "PAYOUT-REF-123456",
+  "description": "Withdrawal to John Doe",
+  "transaction_data": {
+    "transaction_id": "INT87654321",
+    "processing_time": 1728971531,
+    "attempts": [
+      {
+        "timestamp": "2023-07-15T14:28:12Z",
+        "status": "initiated"
+      },
+      {
+        "timestamp": "2023-07-15T14:30:45Z",
+        "status": "completed"
+      }
+    ]
+  },
+  "created_at": "2023-07-15T14:27:55Z",
+  "updated_at": "2023-07-15T14:30:45Z"
+}
+```
+
+### Example Response (Failed Payout)
+```json
+{
+  "payoutId": "61f8c0a5e4b06a7c9d1e2f3d",
+  "recipient": {
+    "email": "jane.doe@example.com",
+    "phone": "+14165557890",
+    "full_name": "Jane Doe",
+    "street_address": "456 Oak Avenue",
+    "country": "CA",
+    "city": "Vancouver",
+    "zip_code": "V6B 2E2",
+    "stateCode": "BC"
+  },
+  "status": "FAILED",
+  "amount": 49.99,
+  "currency": "CAD",
+  "fee": 0.00,
+  "net_amount": 49.99,
+  "reference": "PAYOUT-REF-123457",
+  "description": "Withdrawal to Jane Doe",
+  "transaction_data": {
+    "attempts": [
+      {
+        "timestamp": "2023-07-15T15:10:22Z",
+        "status": "initiated"
+      },
+      {
+        "timestamp": "2023-07-15T15:12:45Z",
+        "status": "failed",
+        "error": {
+          "message": "Invalid recipient information",
+          "code": "INVALID_RECIPIENT"
+        }
+      }
+    ]
+  },
+  "created_at": "2023-07-15T15:10:15Z",
+  "updated_at": "2023-07-15T15:12:45Z"
+}
+```
+
+### Error Response
+If there are any errors, they will be in the following format:
+```json
+{
+  "error": {
+    "code": "error_code",
+    "message": "descriptive error message"
+  }
+}
+```
+
+## Summary
+- **Interac e-Transfer PayOut** enables merchants to send money to users via Canada's trusted payment system.
+- The API requires **Bearer Token authentication** and a valid **Brand ID**.
+- Payouts are processed in **Canadian Dollars (CAD)** only.
+- Recipients receive an email or SMS notification with instructions on how to deposit the funds.
+- Webhooks notify your system of successful or failed transactions.
+
+Use this API to integrate **Interac e-Transfer payouts** into your platform for Canadian customers. 🍁
