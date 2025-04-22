@@ -1,0 +1,123 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure API",
+      "version": "1.0.0",
+      "description": "API to retrieve payout details, including history and status."
+    },
+    "paths": {
+      "/#getpayout/{payoutId}": {
+        "get": {
+          "summary": "Get Payout Status",
+          "description": "Retrieves details of a payout, including its history.",
+          "parameters": [
+            {
+              "name": "payoutId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "Unique identifier for the payout."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "payoutId": { "type": "string" },
+                      "client": {
+                        "type": "object",
+                        "properties": {
+                          "email": { "type": "string", "format": "email" },
+                          "full_name": { "type": "string" },
+                          "street_address": { "type": "string" },
+                          "country": { "type": "string" },
+                          "city": { "type": "string" },
+                          "zip_code": { "type": "string" },
+                          "state_code": { "type": "string" }
+                        }
+                      },
+                      "updated_on": { "type": "integer", "format": "int64" },
+                      "payoutMethod": { "type": "string" },
+                      "beneficiaryDetail": {
+                        "type": "object",
+                        "properties": {
+                          "bankName": { "type": "string" },
+                          "bankAccountName": { "type": "string" },
+                          "bankAccountCurrency": { "type": "string" },
+                          "bankAccountNumber": { "type": "string" },
+                          "bankCountryCode": { "type": "string" },
+                          "swiftCode": { "type": "string" },
+                          "routing_param": {
+                            "type": "object",
+                            "properties": {
+                              "bankCode": { "type": "string" },
+                              "bankBranchCode": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "amountUnit": { "type": "string" },
+                      "amount": { "type": "number", "format": "float" },
+                      "errorMsg": { "type": "string", "nullable": true },
+                      "purpose": { "type": "string" },
+                      "created_on": { "type": "integer", "format": "int64" },
+                      "merchantRef": { "type": "string" },
+                      "status": {
+                        "type": "string",
+                        "enum": ["paid", "payout_in_process", "error"]
+                      },
+                      "status_history": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "status": { "type": "string" },
+                            "timestamp": { "type": "integer", "format": "int64" }
+                          }
+                        }
+                      },
+                      "currency": { "type": "string" },
+                      "success_callback": { "type": "string", "format": "uri" },
+                      "failure_callback": { "type": "string", "format": "uri" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request, possibly due to missing or incorrect payoutId.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Payout not found.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }

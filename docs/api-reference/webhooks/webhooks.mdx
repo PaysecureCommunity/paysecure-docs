@@ -1,0 +1,89 @@
+---
+title: "Payecure Webhooks API"
+description: "API for receiving transaction status updates via Paysecure webhooks."
+openapi: "openapi POST /webhook"
+---
+
+## Understanding Webhooks
+
+The Paysecure Webhooks API notifies merchants about transaction status updates.
+
+### Configuring Webhooks
+- Navigate to **Partner Dashboard → Webhooks → New Webhook**.
+- Enter your endpoint URL and click **Create**.
+- You can configure a single URL for all events or individual URLs for each event.
+
+### Parameters:
+- `purchaseId` (string) - Unique transaction identifier.
+- `status` (string) - Transaction status (`payment in process`, `expired`, `error`, `paid`).
+- `brandId` (string) - Merchant brand identifier.
+- `paysecure_sign` (string) - Signature for payload verification.
+
+<Warning>Authorization requires verifying the `paysecure_sign` header using your public key.</Warning>
+
+## Webhook Payload Structure
+```json JSON
+{
+  "purchaseId": "123456",
+  "status": "paid",
+  "brandId": "7890",
+  "paysecure_sign": "BASE64_SIGNATURE"
+}
+```
+
+## Signature Verification
+```java Java
+import java.security.*;
+import java.util.Base64;
+
+public static boolean verify(String message, String signature, PublicKey publicKey) throws Exception {
+    Signature verifier = Signature.getInstance("SHA256withRSA");
+    verifier.initVerify(publicKey);
+    verifier.update(message.getBytes());
+    return verifier.verify(Base64.getDecoder().decode(signature.getBytes()));
+}
+```
+
+## Query Example
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://your-server.com/webhook",
+    {
+      purchaseId: "123456",
+      status: "paid",
+      brandId: "7890",
+      paysecure_sign: "BASE64_SIGNATURE"
+    },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  console.log(response.data);
+})();
+```
+
+## Response Codes
+| Code | Meaning |
+|------|---------|
+| 200  | Successful Response |
+| 202  | Accepted |
+| 400  | Invalid data |
+| 401  | Unauthorized request |
+| 404  | Page not found |
+| 405  | Method Not Allowed |
+| 415  | Unsupported media type |
+| 422  | Unprocessable content |
+| 429  | Too many requests |
+| 500  | Internal server error |
+
+## Summary
+- **Webhooks notify merchants about transaction events.**
+- **Verify `paysecure_sign` to ensure authenticity.**
+- **Handle response codes appropriately.**
+
+Integrate Paysecure webhooks to stay updated with transaction statuses. 🚀

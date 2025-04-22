@@ -1,0 +1,87 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure Webhooks API",
+      "description": "API for receiving transaction status updates via Paysecure webhooks.",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/#webhook": {
+        "post": {
+          "summary": "Receive transaction status updates",
+          "description": "Paysecure sends transaction status updates to this endpoint.",
+          "operationId": "receiveWebhook",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookPayload"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response"
+            },
+            "202": {
+              "description": "Accepted"
+            },
+            "400": {
+              "description": "Invalid data"
+            },
+            "401": {
+              "description": "Unauthorized request"
+            },
+            "404": {
+              "description": "Page not found"
+            },
+            "405": {
+              "description": "Method Not Allowed"
+            },
+            "415": {
+              "description": "Unsupported media type"
+            },
+            "422": {
+              "description": "Unprocessable content"
+            },
+            "429": {
+              "description": "Too many requests"
+            },
+            "500": {
+              "description": "Internal server error"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "WebhookPayload": {
+          "type": "object",
+          "properties": {
+            "purchaseId": {
+              "type": "string",
+              "description": "Unique transaction identifier."
+            },
+            "status": {
+              "type": "string",
+              "enum": ["payment in process", "expired", "error", "paid"],
+              "description": "Transaction status."
+            },
+            "brandId": {
+              "type": "string",
+              "description": "Merchant brand identifier."
+            },
+            "paysecure_sign": {
+              "type": "string",
+              "description": "Signature for payload verification."
+            }
+          },
+          "required": ["purchaseId", "status", "brandId", "paysecure_sign"]
+        }
+      }
+    }
+  }
+  

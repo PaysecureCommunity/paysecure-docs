@@ -1,0 +1,139 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure API",
+      "description": "API for initiating and retrieving purchase details on Paysecure.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1"
+      }
+    ],
+    "paths": {
+      "/purchases": {
+        "post": {
+          "summary": "Initiate a payment purchase",
+          "description": "Creates a new purchase request with client and purchase details.",
+          "operationId": "createPurchase",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PurchaseResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/purchases/{purchaseId}": {
+        "get": {
+          "summary": "Retrieve purchase details",
+          "description": "Fetches details of a specific purchase, including status and transaction history.",
+          "operationId": "getPurchase",
+          "parameters": [
+            {
+              "name": "purchaseId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PurchaseResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PurchaseRequest": {
+          "type": "object",
+          "properties": {
+            "client": {
+              "type": "object",
+              "properties": {
+                "email": { "type": "string" },
+                "street_address": { "type": "string" },
+                "city": { "type": "string" },
+                "full_name": { "type": "string" },
+                "zip_code": { "type": "string" },
+                "country": { "type": "string" },
+                "date_of_birth": { "type": "string", "format": "date" },
+                "stateCode": { "type": "string" },
+                "phone": { "type": "string" }
+              }
+            },
+            "purchase": {
+              "type": "object",
+              "properties": {
+                "currency": { "type": "string" },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "price": { "type": "number", "format": "float" }
+                    }
+                  }
+                }
+              }
+            },
+            "paymentMethod": { "type": "string" },
+            "brand_id": { "type": "string" },
+            "success_redirect": { "type": "string" },
+            "failure_redirect": { "type": "string" },
+            "success_callback": { "type": "string" },
+            "failure_callback": { "type": "string" }
+          }
+        },
+        "PurchaseResponse": {
+          "type": "object",
+          "properties": {
+            "purchaseId": { "type": "string" },
+            "status": { "type": "string" },
+            "merchantRef": { "type": "string" },
+            "checkout_url": { "type": "string" },
+            "created_on": { "type": "integer" },
+            "updated_on": { "type": "integer" },
+            "amountUnit": { "type": "string" },
+            "errorMsg": { "type": "string" },
+            "redirectType": { "type": "string" },
+            "force_recurring": { "type": "boolean" },
+            "brand_id": { "type": "string" },
+            "success_redirect": { "type": "string" },
+            "failure_redirect": { "type": "string" },
+            "success_callback": { "type": "string" },
+            "failure_callback": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+  
