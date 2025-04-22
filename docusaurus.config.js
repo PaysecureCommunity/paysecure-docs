@@ -1,111 +1,92 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const branding = require('./branding.config');
 
-// With JSDoc @type annotations, IDEs can provide config autocompletion
+// Set brand from env or default
+const brand = process.env.BRAND || 'paysecure';
+const config = branding[brand] || {};
+
+// Fallback required fields
+const title = config.title || 'Default API Docs';
+const url = config.url || 'https://example.com';
+const baseUrl = config.baseUrl || '/';
+
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
-(module.exports = {
-  title: 'Paysecure API Docs',
-  tagline: 'Customised API documentation',
-  url: 'https://paysecure.github.io',
-  baseUrl: '/',
+module.exports = {
+  title,
+  tagline: config.tagline || 'Default tagline',
+  url,
+  baseUrl,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'Paysecure', // Usually your GitHub org/user name.
-  projectName: 'paysecure-docs', // Usually your repo name.
+  favicon: config.favicon || 'img/favicon.ico',
+  organizationName: 'Paysecure',
+  projectName: 'paysecure-docs',
 
   presets: [
     [
       '@docusaurus/preset-classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl: 'https://github.com/PaysecureCommunity/paysecure-docs',
+          editUrl: config.github || 'https://github.com/default-org/docs',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-      }),
+      },
     ],
   ],
 
-  themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
-      navbar: {
-        title: 'Paysecure API Docs',
-        logo: {
-          alt: 'API Docs',
-          src: 'img/logo.png',
+  themeConfig: {
+    navbar: {
+      title: title,
+      logo: {
+        alt: 'API Docs',
+        src: config.logo || 'img/logo.png',
+      },
+      items: [
+        {
+          type: 'doc',
+          docId: 'intro',
+          position: 'left',
+          label: 'API Reference',
         },
-        items: [
-          {
-            type: 'doc',
-            docId: 'intro',
-            position: 'left',
-            label: 'API Reference',
-          },
-          {to: '/docs/guide', label: 'Guides', position: 'left'},
-          {
-            href: 'https://github.com/PaysecureCommunity/paysecure-docs',
-            label: 'GitHub',
-            position: 'right',
-          },
-        ],
-      },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Introduction',
-                to: '/docs/intro',
-              },
-              {
-                label: 'API Reference',
-                to: '/docs/api-reference/intro',
-              },
-              {
-                label: 'Authentication',
-                to: '/docs/authentication',
-              },
-              {
-                label: 'Payment Methods',
-                to: '/docs/payment-methods',
-              },
-              {
-                label: 'FAQ',
-                to: '/docs/FAQ',
-              },
-              {
-                label: 'Support',
-                to: '/docs/support',
-              }
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Guides',
-                to: '/docs/guide',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/PaysecureCommunity/paysecure-docs',
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} Paysecure, Inc.`,
-      },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
-      },
-    }),
-});
+        { to: '/docs/guide', label: 'Guides', position: 'left' },
+        {
+          href: config.github || 'https://github.com/default-org/docs',
+          label: 'GitHub',
+          position: 'right',
+        },
+      ],
+    },
+    footer: {
+      style: (config.theme && config.theme.footerStyle) || 'dark',
+      links: [
+        {
+          title: 'Docs',
+          items: [
+            { label: 'Introduction', to: '/docs/intro' },
+            { label: 'API Reference', to: '/docs/api-reference/intro' },
+            { label: 'Authentication', to: '/docs/authentication' },
+            { label: 'Payment Methods', to: '/docs/payment-methods' },
+            { label: 'FAQ', to: '/docs/FAQ' },
+            { label: 'Support', to: '/docs/support' },
+          ],
+        },
+        {
+          title: 'More',
+          items: [
+            { label: 'Guides', to: '/docs/guide' },
+            { label: 'GitHub', href: config.github || '#' },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} Paysecure`,
+    },
+    prism: {
+      theme: lightCodeTheme,
+      darkTheme: darkCodeTheme,
+    },
+  },
+};
