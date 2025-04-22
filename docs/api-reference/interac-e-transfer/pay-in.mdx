@@ -1,0 +1,570 @@
+---
+title: "Interac e-Transfer PayIn API"
+id: pay-in
+description: "API for processing payments using Interac e-Transfer in Canada."
+openapi: "openapi POST /purchases"
+---
+
+
+#### Overview
+The merchant requests the INTERAC-E-TRANSFER purchase API to initiate a PayIn (deposit/collections) transaction. A payment link is generated, and the customer is redirected to follow the payment instructions. Upon successful or failed payment, an appropriate webhook is sent back to the merchant.
+
+#### Authorization
+**Bearer Token**
+This API requires Bearer Token authentication, which can be retrieved from the Paysecure API Documentation - Live.
+
+#### Endpoint
+**POST**: Create Purchase  
+`https://api.paysecure.net/api/v1/purchases/`
+
+#### Required Parameters
+To generate a purchase, you must provide the **Brand ID** (request body) and **API key** (header), both available in the merchant dashboard.
+
+##### Mandatory Parameters in Request Body:
+| Parameter | Notes |
+|-----------|-------|
+| `client.email` | Unique identifier for the user |
+| `client.city` | Customer's city |
+| `client.country` | ISO-3166 Country Code (Must be uppercase, e.g., "CA" for Interac) |
+| `client.stateCode` | State code in uppercase (e.g., "AL", "XZ") |
+| `client.street_address` | Street address of the client |
+| `client.zip_code` | ZIP code of the client |
+| `client.phone` | Client's phone number |
+| `client.full_name` | Full name of the client |
+| `purchase.currency` | ISO 4217 currency code (Should be 'CAD' for Interac) |
+| `purchase.products.name` | Product name |
+| `purchase.products.price` | Price in decimal format (e.g., `10.37`) |
+| `brand_id` | Obtainable from the merchant dashboard |
+| `success_redirect` | URL to redirect on success |
+| `failure_redirect` | URL to redirect on failure |
+
+##### Optional Parameters:
+| Parameter | Notes |
+|-----------|-------|
+| `expireInMin` | Time window for completing the payment before it expires. Payments outside this window may cause inconsistencies. |
+| `merchantRef` | Strongly advised for preventing duplicate transactions and retrieving transaction details. |
+| `paymentMethod` | Specifies the payment solution used. If provided, Paysecure will process the payment directly. |
+
+### Example Request
+```json
+{
+  "client": {
+    "email": "ashishm.21190@gmail.com",
+    "street_address": "10 New Burlington Street Apt. 214",
+    "city": "London",
+    "full_name": "Test test",
+    "zip_code": "W1S 3BE",
+    "country": "CA",
+    "stateCode": "QLD",
+    "phone": "+447755564318",
+    "gender": "MALE",
+    "date_of_birth": "1970-07-10"
+  },
+  "purchase": {
+    "currency": "CAD",
+    "products": [
+      {
+        "name": "test",
+        "price": 1
+      }
+    ]
+  },
+  "paymentMethod": "Interac-e-Transfer",
+  "brand_id": "0cea7af3-23b2-4278-ab94-acf4076cbee4",
+  "success_redirect": "https://your.redirect.url/getResponse",
+  "failure_redirect": "https://your.redirect.url/getResponse",
+  "success_callback": "https://your.success.callback.url",
+  "failure_callback": "https://your.success.failure.url"
+}
+```
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://api.paysecure.net/api/v1/purchases",
+    {
+      client: {
+        email: "john.doe@example.com",
+        street_address: "123 Maple Street",
+        city: "Toronto",
+        full_name: "John Doe",
+        zip_code: "M5V 2N4",
+        country: "CA",
+        stateCode: "ON",
+        phone: "+14165551234",
+        gender: "MALE",
+        date_of_birth: "1985-07-15"
+      },
+      purchase: {
+        currency: "CAD",
+        products: [
+          {
+            name: "Premium Subscription",
+            price: 49.99
+          }
+        ]
+      },
+      paymentMethod: "Interac-e-Transfer",
+      brand_id: "your-brand-id-here",
+      success_redirect: "https://your-website.com/success",
+      failure_redirect: "https://your-website.com/failure",
+      success_callback: "https://your-website.com/api/webhooks/success",
+      failure_callback: "https://your-website.com/api/webhooks/failure"
+    },
+    {
+      headers: {
+        "Authorization": "Bearer your-token-here",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### cURL Request
+```sh
+curl --location 'https://api.paysecure.net/api/v1/purchases' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer Token' \
+--data-raw '{
+  "client": {
+    "email": "ashishm.21190@gmail.com",
+    "street_address": "10 New Burlington Street Apt. 214",
+    "city": "London",
+    "full_name": "Test test",
+    "zip_code": "W1S 3BE",
+    "country": "CA",
+    "stateCode": "QLD",
+    "phone": "+447755564318",
+    "gender": "MALE",
+    "date_of_birth": "1970-07-10"
+  },
+  "purchase": {
+    "currency": "CAD",
+    "products": [
+      {
+        "name": "test",
+        "price": 1
+      }
+    ]
+  },
+  "paymentMethod": "Interac-e-Transfer",
+  "brand_id": "0cea7af3-23b2-4278-ab94-acf4076cbee4",
+  "success_redirect": "https://your.redirect.url/getResponse",
+  "failure_redirect": "https://your.redirect.url/getResponse",
+  "success_callback": "https://your.success.callback.url",
+  "failure_callback": "https://your.success.failure.url"
+}'
+```
+
+### Example Response
+```json
+{
+  "purchaseId": "670cb0affcc7f4706acb65e0",
+  "client": {
+    "email": "ashishm.21190@gmail.com",
+    "phone": "+447755564318",
+    "full_name": "Test test",
+    "date_of_birth": "1970-07-10",
+    "street_address": "10 New Burlington Street Apt. 214",
+    "country": "CA",
+    "city": "London",
+    "zip_code": "W1S 3BE",
+    "stateCode": "QLD"
+  },
+  "status": "PAYMENT_IN_PROCESS",
+  "purchase": {
+    "currency": "CAD",
+    "products": [
+      {
+        "name": "test",
+        "price": 1
+      }
+    ],
+    "total": 1
+  },
+  "payment": {
+    "amount": 1,
+    "currency": "CAD",
+    "net_amount": 1
+  },
+  "checkout_url": "https://api.paysecure.net/payments/670cb0affcc7f4706acb65e0/",
+  "success_redirect": "https://your.redirect.url/getResponse.jsp?success=true",
+  "failure_redirect": "https://your.redirect.url/getResponse.jsp?success=false"
+}
+```
+
+## Summary
+- **Interac e-Transfer** enables users to deposit money via Canada's trusted payment system.
+- The API requires **Bearer Token authentication** and a valid **Brand ID**.
+- Transactions are processed in **Canadian Dollars (CAD)** only.
+- Customers are redirected to a secure checkout page to complete their payment.
+- Webhooks notify your system of successful or failed transactions.
+
+Use this API to integrate **Interac e-Transfer payments** into your platform for Canadian customers. 🍁
+
+## Get Purchase Status
+
+### Overview
+This endpoint allows you to retrieve all details of a purchase (PayIn), including its transaction history. With respect to bank transfers, the purchase request is synonymous with the PayIn request.
+
+### Endpoint
+**GET**: Get Purchase Status  
+`https://api.paysecure.net/api/v1/purchases/{purchaseId}/`
+
+### Required Parameters
+You need to pass the `purchaseId` in the API URL.
+
+### Possible Status Values
+| Status | Notes |
+|--------|-------|
+| `paid` | Transaction Successful |
+| `payment_in_process` | Payment is under Processing |
+| `expired` | Purchase has Expired |
+| `error` | Transaction has Failed |
+
+### Error Details
+If there are any issues with the purchase, you can get more details from the `transaction_data.attempts.error` attribute of the response object.
+
+### Headers
+| Header | Value |
+|--------|-------|
+| Content-Type | application/json |
+| Authorization | Bearer Token |
+
+### Example Request
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const purchaseId = "61f8c0a5e4b06a7c9d1e2f3a";
+  
+  const response = await axios.get(
+    `https://api.paysecure.net/api/v1/purchases/${purchaseId}`,
+    {
+      headers: {
+        "Authorization": "Bearer your-token-here",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### cURL Request
+```sh
+curl --location -g 'https://api.paysecure.net/api/v1/purchases/{purchaseId}/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer Token'
+```
+
+### Example Response (Successful Transaction)
+```json
+{
+    "purchaseId": "670dfe26de28c320be6d8a5e",
+    "client": {
+        "email": "ashishm.21190@gmail.com",
+        "phone": "+447755564318",
+        "full_name": "Test test",
+        "date_of_birth": "1970-07-10",
+        "street_address": "10 New Burlington Street Apt. 214",
+        "country": "CA",
+        "city": "London",
+        "zip_code": "W1S 3BE",
+        "cc": [],
+        "bcc": [],
+        "gender": "MALE",
+        "stateCode": "QLD"
+    },
+    "updated_on": 1728971531,
+    "type": "purchase",
+    "paymentMethod": "INTERAC-E-TRANSFER",
+    "amountUnit": "MAJOR",
+    "errorMsg": "Transaction succeeded-APPROVED",
+    "redirectType": "GET",
+    "force_recurring": false,
+    "created_on": 1728970278,
+    "merchantRef": "670dfe26de28c320be6d8a5e",
+    "merchantName": "merchant002",
+    "purchase": {
+        "currency": "CAD",
+        "products": [
+            {
+                "name": "test",
+                "quantity": 1.0,
+                "price": 1.0,
+                "discount": 0,
+                "tax_percent": "0.00"
+            }
+        ],
+        "total": 1.0,
+        "language": "en",
+        "notes": "",
+        "debt": 0,
+        "total_formatted": 1.0,
+        "expireInMin": "1440",
+        "request_client_details": [],
+        "timezone": "MIT",
+        "email_message": ""
+    },
+    "payment": {
+        "is_outgoing": false,
+        "payment_type": "PURCHASE",
+        "amount": 1.0,
+        "currency": "CAD",
+        "net_amount": 1.0,
+        "fee_amount": 0.0,
+        "pending_amount": 0.0,
+        "pending_unfreeze_on": null,
+        "description": "",
+        "paid_on": 1728970278,
+        "remote_paid_on": 1728970278
+    },
+    "issuer_details": {
+        "website": "",
+        "legal_street_address": "",
+        "legal_country": "",
+        "legal_city": "",
+        "legal_zip_code": "",
+        "bank_accounts": [
+            {}
+        ],
+        "legal_name": "test6",
+        "brand_name": "test6",
+        "registration_number": "",
+        "tax_number": ""
+    },
+    "transaction_data": {
+        "payment_method": "",
+        "flow": "payform",
+        "extra": {
+            "amount": 1.0,
+            "masked_pan": "INTERAC-E-TRANSFER"
+        },
+        "country": "",
+        "attempts": [
+            {
+                "client_ip": "103.59.75.207",
+                "type": "execute",
+                "payment_method": "INTERAC-E-TRANSFER",
+                "flow": "payform",
+                "successful": true,
+                "country": "INTERAC-E-TRANSFER",
+                "processing_time": 1728970278,
+                "extra": {
+                    "amount": 1.0,
+                    "masked_pan": "INTERAC-E-TRANSFER"
+                }
+            }
+        ]
+    },
+    "status": "PAID",
+    "status_history": [
+        {
+            "status": "created",
+            "timestamp": 1728970278
+        },
+        {
+            "status": "pending_execute",
+            "timestamp": 1728970278
+        },
+        {
+            "status": "payment_in_process",
+            "timestamp": 1728970278
+        },
+        {
+            "status": "paid",
+            "timestamp": 1728971531
+        },
+        {
+            "status": "viewed",
+            "timestamp": 1729154373
+        }
+    ],
+    "viewedOn": 1729154373,
+    "is_test": false,
+    "brand_id": "c4003b2c-22d4-4dc1-ad0c-c6b54f8c9636",
+    "send_receipt": false,
+    "is_recurring_token": false,
+    "skip_capture": false,
+    "reference_generated": "PS11863",
+    "issued": "2024-10-15",
+    "due": 1728970278,
+    "refund_upto": 1744518682,
+    "cc_descriptor": "",
+    "fraudScore": "NA",
+    "trustScore": "NA",
+    "refund_availability": "NONE",
+    "refundable_amount": 1.0,
+    "success_redirect": "https://your.redirect.url/getResponse.jsp?success=true",
+    "failure_redirect": "https://your.redirect.url/getResponse.jsp?success=false",
+    "cancel_redirect": "",
+    "success_callback": "https://your.success.callback.url",
+    "failure_callback": "https://your.success.failure.url",
+    "platform": "API",
+    "created_from_ip": "103.59.75.207",
+    "checkout_url": "https://api.paysecure.net/payments/670dfe26de28c320be6d8a5e/",
+    "payoutProcess": false
+}{
+    "purchaseId": "670dfe26de28c320be6d8a5e",
+    "client": {
+        "email": "ashishm.21190@gmail.com",
+        "phone": "+447755564318",
+        "full_name": "Test test",
+        "date_of_birth": "1970-07-10",
+        "street_address": "10 New Burlington Street Apt. 214",
+        "country": "CA",
+        "city": "London",
+        "zip_code": "W1S 3BE",
+        "cc": [],
+        "bcc": [],
+        "gender": "MALE",
+        "stateCode": "QLD"
+    },
+    "updated_on": 1728971531,
+    "type": "purchase",
+    "paymentMethod": "INTERAC-E-TRANSFER",
+    "amountUnit": "MAJOR",
+    "errorMsg": "Transaction succeeded-APPROVED",
+    "redirectType": "GET",
+    "force_recurring": false,
+    "created_on": 1728970278,
+    "merchantRef": "670dfe26de28c320be6d8a5e",
+    "merchantName": "merchant002",
+    "purchase": {
+        "currency": "CAD",
+        "products": [
+            {
+                "name": "test",
+                "quantity": 1.0,
+                "price": 1.0,
+                "discount": 0,
+                "tax_percent": "0.00"
+            }
+        ],
+        "total": 1.0,
+        "language": "en",
+        "notes": "",
+        "debt": 0,
+        "total_formatted": 1.0,
+        "expireInMin": "1440",
+        "request_client_details": [],
+        "timezone": "MIT",
+        "email_message": ""
+    },
+    "payment": {
+        "is_outgoing": false,
+        "payment_type": "PURCHASE",
+        "amount": 1.0,
+        "currency": "CAD",
+        "net_amount": 1.0,
+        "fee_amount": 0.0,
+        "pending_amount": 0.0,
+        "pending_unfreeze_on": null,
+        "description": "",
+        "paid_on": 1728970278,
+        "remote_paid_on": 1728970278
+    },
+    "issuer_details": {
+        "website": "",
+        "legal_street_address": "",
+        "legal_country": "",
+        "legal_city": "",
+        "legal_zip_code": "",
+        "bank_accounts": [
+            {}
+        ],
+        "legal_name": "test6",
+        "brand_name": "test6",
+        "registration_number": "",
+        "tax_number": ""
+    },
+    "transaction_data": {
+        "payment_method": "",
+        "flow": "payform",
+        "extra": {
+            "amount": 1.0,
+            "masked_pan": "INTERAC-E-TRANSFER"
+        },
+        "country": "",
+        "attempts": [
+            {
+                "client_ip": "103.59.75.207",
+                "type": "execute",
+                "payment_method": "INTERAC-E-TRANSFER",
+                "flow": "payform",
+                "successful": true,
+                "country": "INTERAC-E-TRANSFER",
+                "processing_time": 1728970278,
+                "extra": {
+                    "amount": 1.0,
+                    "masked_pan": "INTERAC-E-TRANSFER"
+                }
+            }
+        ]
+    },
+    "status": "PAID",
+    "status_history": [
+        {
+            "status": "created",
+            "timestamp": 1728970278
+        },
+        {
+            "status": "pending_execute",
+            "timestamp": 1728970278
+        },
+        {
+            "status": "payment_in_process",
+            "timestamp": 1728970278
+        },
+        {
+            "status": "paid",
+            "timestamp": 1728971531
+        },
+        {
+            "status": "viewed",
+            "timestamp": 1729154373
+        }
+    ],
+    "viewedOn": 1729154373,
+    "is_test": false,
+    "brand_id": "c4003b2c-22d4-4dc1-ad0c-c6b54f8c9636",
+    "send_receipt": false,
+    "is_recurring_token": false,
+    "skip_capture": false,
+    "reference_generated": "PS11863",
+    "issued": "2024-10-15",
+    "due": 1728970278,
+    "refund_upto": 1744518682,
+    "cc_descriptor": "",
+    "fraudScore": "NA",
+    "trustScore": "NA",
+    "refund_availability": "NONE",
+    "refundable_amount": 1.0,
+    "success_redirect": "https://your.redirect.url/getResponse.jsp?success=true",
+    "failure_redirect": "https://your.redirect.url/getResponse.jsp?success=false",
+    "cancel_redirect": "",
+    "success_callback": "https://your.success.callback.url",
+    "failure_callback": "https://your.success.failure.url",
+    "platform": "API",
+    "created_from_ip": "103.59.75.207",
+    "checkout_url": "https://api.paysecure.net/payments/670dfe26de28c320be6d8a5e/",
+    "payoutProcess": false
+}
+```
+
+### Error Response
+If there are any errors, they will be in the following format:
+```json
+{
+  "message": "descriptive error message",
+  "code": "error_code"
+}
+```

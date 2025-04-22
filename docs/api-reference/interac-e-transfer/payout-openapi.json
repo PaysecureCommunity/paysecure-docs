@@ -1,0 +1,242 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure Interac e-Transfer PayOut API",
+      "version": "1.0.0",
+      "description": "API for processing payouts using Interac e-Transfer in Canada."
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1"
+      }
+    ],
+    "paths": {
+      "/payout": {
+        "post": {
+          "summary": "Create PayOut",
+          "description": "To initiate a payment, the very first call to make is to create a payout with the required data in the request body.",
+          "operationId": "createPayout",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutRequest"
+                },
+                "example": {
+                  "client": {
+                    "email": "ashishm.21190@gmail.com",
+                    "country": "CA",
+                    "phone": "+14377717874",
+                    "full_name": "Test Person-uk"
+                  },
+                  "amount": 10,
+                  "currency": "CAD",
+                  "payoutMethod": "Payout-INTERAC",
+                  "purpose": "test payout",
+                  "success_callback": "https://success.com",
+                  "failure_callback": "https://failure.com"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Payout created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PayoutResponse"
+                  },
+                  "example": {
+                    "payoutId": "670cb200fcc7f4706acb6759",
+                    "client": {
+                      "email": "ashishm.21190@gmail.com",
+                      "phone": "+14377717874",
+                      "full_name": "Ashish Mistry",
+                      "country": "CA"
+                    },
+                    "updated_on": 1728885248,
+                    "payoutMethod": "PAYOUT-INTERAC-E-TRANSFER"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PayoutRequest": {
+          "type": "object",
+          "required": [
+            "client",
+            "amount",
+            "currency",
+            "payoutMethod",
+            "purpose"
+          ],
+          "properties": {
+            "client": {
+              "type": "object",
+              "required": [
+                "full_name",
+                "country"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email address of the client",
+                  "example": "ashishm.21190@gmail.com"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "Phone number of the client",
+                  "example": "+14377717874"
+                },
+                "full_name": {
+                  "type": "string",
+                  "description": "Full name of the client",
+                  "example": "Test Person-uk"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "ISO-3166 Country Code (Must be uppercase)",
+                  "example": "CA"
+                }
+              },
+              "description": "Client information"
+            },
+            "amount": {
+              "type": "number",
+              "format": "float",
+              "description": "Amount to be paid out",
+              "example": 10
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code (e.g., CAD)",
+              "example": "CAD"
+            },
+            "payoutMethod": {
+              "type": "string",
+              "description": "Method of payout",
+              "example": "Payout-INTERAC"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "Purpose of the payout",
+              "example": "test payout"
+            },
+            "success_callback": {
+              "type": "string",
+              "description": "URL to call on successful payout",
+              "example": "https://success.com"
+            },
+            "failure_callback": {
+              "type": "string",
+              "description": "URL to call on failed payout",
+              "example": "https://failure.com"
+            }
+          }
+        },
+        "PayoutResponse": {
+          "type": "object",
+          "properties": {
+            "payoutId": {
+              "type": "string",
+              "description": "Unique identifier for the payout transaction",
+              "example": "670cb200fcc7f4706acb6759"
+            },
+            "client": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Email address of the client",
+                  "example": "ashishm.21190@gmail.com"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "Phone number of the client",
+                  "example": "+14377717874"
+                },
+                "full_name": {
+                  "type": "string",
+                  "description": "Full name of the client",
+                  "example": "Ashish Mistry"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "ISO-3166 Country Code",
+                  "example": "CA"
+                }
+              }
+            },
+            "updated_on": {
+              "type": "integer",
+              "description": "Timestamp of when the payout was last updated",
+              "example": 1728885248
+            },
+            "payoutMethod": {
+              "type": "string",
+              "description": "Method of payout",
+              "example": "PAYOUT-INTERAC-E-TRANSFER"
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error code"
+            },
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT",
+          "description": "API key (in the header) can be located in the Dashboard section of your merchant account login."
+        }
+      }
+    }
+  }

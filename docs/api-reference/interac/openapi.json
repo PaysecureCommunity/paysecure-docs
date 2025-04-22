@@ -1,0 +1,133 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Interac PayIn API",
+      "description": "API for processing Interac payments",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1",
+        "description": "Production server"
+      }
+    ],
+    "paths": {
+      "/payout": {
+        "post": {
+          "summary": "Create Payout",
+          "description": "Initiates a payout transaction",
+          "operationId": "createPayout",
+          "tags": ["Payouts"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayoutRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Payout created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CreatePayoutResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "CreatePayoutRequest": {
+          "type": "object",
+          "required": ["amount", "currency", "recipient"],
+          "properties": {
+            "amount": {
+              "type": "number",
+              "description": "Amount to be paid out"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code"
+            },
+            "recipient": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "Recipient's email"
+                },
+                "bankAccount": {
+                  "type": "string",
+                  "description": "Recipient's bank account details"
+                }
+              }
+            }
+          }
+        },
+        "CreatePayoutResponse": {
+          "type": "object",
+          "properties": {
+            "payoutId": {
+              "type": "string",
+              "description": "Unique identifier for the payout"
+            },
+            "status": {
+              "type": "string",
+              "description": "Payout status"
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "error_code": {
+              "type": "string",
+              "description": "Error code"
+            }
+          }
+        }
+      }
+    }
+  }

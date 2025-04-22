@@ -1,0 +1,203 @@
+---
+id: "pay-in"
+title: "Pix PayIn API"
+description: "API for processing payments and payouts using Paysecure."
+openapi: "openapi POST /purchases"
+---
+## PayIn Flows
+
+### How it works
+To initiate a PIX payment, a payer can scan the code using their PIX payment app (such as Itau, NuBank, etc.). These codes comply with BCB’s infrastructure requirements to ensure that the merchant's details are stored securely and there are no errors during the payment journey.
+
+#### Flow
+1. Merchant platforms can create a dynamic QR code by passing the relevant parameter using Paysecure’s API.
+2. The platform can display the dynamic QR code on its app or any website at checkout or on a third-party app.
+3. The payer scans the QR code from the PIX app of their choice on their mobile.
+4. The payer authorizes the transaction on the app by entering a valid PIN.
+5. Once the payment is done, the merchant platform receives a transaction status callback from Paysecure to a pre-configured endpoint.
+6. The platform can also check the request status using the reference ID generated from the collection request using the Check Payment Status API.
+
+
+
+- **Initiate Purchase**: The merchant calls the create purchase API to start the purchase process.
+
+- **Get Checkout URL**: If the API call is successful, the response body contains a checkout URL.
+
+- **Redirect Client**: The merchant redirects the client to the checkout URL received.
+
+- **Client Payment**: The client is presented with a QR code to complete the payment.
+
+    > Please note that instead of redirecting to the checkout URL, the information to create a page on the merchant's digital estate itself containing the QR code and other information can be achieved by utilizing the data on the "pix_payload" object in the response.
+
+- **Payment Outcome**: After the payment attempt, the client is redirected to a URL indicating success or failure, which was specified in the create purchase API.
+
+- **Callback Posting**: Upon successful or failed payment, the entire payload of the transaction is posted to designated success or failure callback URLs.
+
+### **POST Create PayIn**
+```bash
+https://api.paysecure.net/api/v1/payin/
+```
+To Initiate a payment, the very first call to make is `/purchases` with the required data in the request body.
+
+To generate a Purchase, you are required to provide the `Brand ID` (in the request body) and API key (in the header) Both can be located in the Dashboard section of your merchant account login.
+
+The request body structure is shown on the request body of the example request shown here.
+
+The following (see table below) are the mandatory parameters that are required to create a purchase request.
+
+### Parameters
+##### Mandatory Parameters:
+| Parameter | Notes |
+|-----------|-------|
+| `client.full_name` |  |
+| `client.email` |  |
+| `client.tax_number` | CPF (Brazilian tax identification number of customer), must contain 11 digits |
+| `paymentMethod` | PIX |
+| `purchase.products.name` |  |
+| `purchase.currency` | ISO 4217 code for currency you want to send the transaction in.<br/>This should be 'BRL' for PIX |
+| `purchase.products.price` | Price in decimal format.<br/>example 1:<br/>EUR 5 , should be sent as 5.00<br/><br/>example 2:<br/>USD 10 and 37 cents , should be sent as 10.37 |
+| `brand_id` | Obtain from Dashboard section of your merchant account login. |
+| `success_redirect` | URL to send the user if the transactions is successful |
+| `failure_redirect` | URL to send the user if the transactions is UNSUCCESSFUL |
+
+### Response Payload Details
+
+The response includes a `pix_payload` object containing all necessary fields to create a payment page:
+
+- `pix_payload.payload`: Contains fields for creating a QR code payment page
+- `pix_payload.qr_code`: Base64 encoded QR code image that can be displayed directly
+
+### Essential Optional Parameters
+
+#### merchantRef
+While not mandatory, using `merchantRef` is strongly recommended as it provides:
+
+1. **Duplicate Prevention**: Acts as a unique identifier to prevent duplicate transactions when the same `merchantRef` is used multiple times
+
+2. **Transaction Lookup**: Enables transaction retrieval even if the initial response times out or `purchaseId` isn't received
+
+If not specified, the platform automatically assigns an internal `purchaseId` as the transaction reference.
+
+#### paymentMethod
+Specifies which payment solution to use for the transaction. When provided, Paysecure performs direct payment with the selected method instead of loading the Paysecure URL.
+
+#### Example Request
+```curl
+curl --location 'https://api.paysecure.net/api/v1/purchases' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer Token' \
+--data-raw '{
+   "client": {
+       "email": "test@gmail.com",
+       "full_name": "test test",
+       "tax_number": "39933551809"
+   },
+   "purchase": {
+       "currency": "BRL",
+       "products": [
+           {
+               "name": "test ",
+               "price": 10
+           }
+       ]
+   },
+   "paymentMethod": "PIX",
+   "merchantRef": "test12",
+   "brand_id": "90ed108b-6753-465d-8a21-e2cc604ff814 ",
+   "success_redirect": "https://test.com/getResponse.jsp?success=true",
+   "failure_redirect": "https://test.com/getResponse.jsp?success=false",
+   "success_callback": "https://test1.com",
+   "failure_callback": "https://test2.com"
+}
+'
+```
+
+### Example Response
+```json
+{
+  "purchaseId": "65f9368cb905381ba207b3c4",
+  "client": {
+    "email": "test@gmail.com",
+    "full_name": "Test test",
+    "tax_number": "39933551809"
+  },
+  "updated_on": 1710831244,
+  "type": "purchase",
+  "paymentMethod": "PIX",
+  "amountUnit": "MAJOR",
+  "errorMsg": "",
+  "redirectType": "POST",
+  "force_recurring": false,
+  "created_on": 1710831244,
+  "merchantRef": "65f9368cb905381ba207b3c4",
+  "merchantName": "test",
+  "purchase": {
+    "currency": "USD",
+    "products": [
+      {
+        "price": 10
+      }
+    ],
+    "total": 10,
+    "language": "en",
+    "total_formatted": 1,
+    "timezone": "MIT"
+  },
+  "issuer_details": {
+    "bank_accounts": [
+      {
+        "bank_account": "",
+        "bank_code": ""
+      }
+    ],
+    "legal_name": "newbrand",
+    "brand_name": "newbrand"
+  },
+  "transaction_data": {},
+  "status": "CREATED",
+  "status_history": [
+    {
+      "status": "created",
+      "timestamp": 1710831244
+    }
+  ],
+  "pix_payload": {
+    "payload": "00020101021226800014br.gov.bcb.pix2558pix.asaas.com/qr/cobv/e3eb36eb-7e9b-404d-9bd3-b486a42da3445204000053039865802BR5925A55 CONSULTORIA EM CREDIT6009Sao Paulo61080455202062070503***630451CA",
+    "qr_code": "iVBORw0KGgoAAAANSUhEUgAAAZ8AAAGfCAIAAAAPgEjDAAAP4UlEQVR42u3bUY7cSA4EUN … ..",
+    "expiration_date": "2025-03-27 23:59:59"
+  },
+  "is_test": false,
+  "brand_id": "90ed108b-6753-465d-8a21-e2cc604ff814",
+  "send_receipt": false,
+  "is_recurring_token": false,
+  "skip_capture": false,
+  "reference_generated": "PS2696",
+  "issued": "2024-03-19",
+  "due": 1710831244,
+  "refund_upto": 0,
+  "cc_descriptor": "",
+  "fraudScore": "NA",
+  "trustScore": "NA",
+  "refund_availability": "NONE",
+  "refundable_amount": 0,
+  "success_redirect": "https://test.com/getResponse.jsp?success=true",
+  "failure_redirect": "https://test.com/getResponse.jsp?success=false",
+  "cancel_redirect": "",
+  "success_callback": "https://test1.com",
+  "failure_callback": "https://test2.com",
+  "platform": "API",
+  "created_from_ip": "223.182.100.34",
+  "checkout_url": "https://api.paysecure.net/payments/65f9368cb905381ba207b3c4/"
+}
+```
+
+### Summary
+The response includes detailed information about the PIX payment transaction, including:
+
+- Transaction identifiers and references
+- Payment amount and currency details  
+- Customer and merchant information
+- PIX payload with QR code data
+- Transaction status and history
+- Callback and redirect URLs
+- Additional metadata like fraud scores and platform details

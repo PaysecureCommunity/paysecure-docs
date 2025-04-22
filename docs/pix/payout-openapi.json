@@ -1,0 +1,367 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Paysecure PIX Payout API",
+      "description": "API for initiating and managing PIX payouts in Brazil",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.net/api/v1",
+        "description": "Production server"
+      }
+    ],
+    "paths": {
+      "/#payout": {
+        "post": {
+          "summary": "Create a PIX payout",
+          "description": "Initiates a PIX payout to a recipient using their PIX key",
+          "operationId": "createPayout",
+          "tags": ["Payout"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutRequest"
+                },
+                "example": {
+                  "client": {
+                    "email": "test@gmail.com",
+                    "full_name": "Test test",
+                    "documentId": "97c1c590-554b-4449-a0f1-8da9f9756937",
+                    "documentType": "evp"
+                  },
+                  "purpose": "payout to test",
+                  "payoutMethod": "Payout-PIX",
+                  "amount": 10,
+                  "currency": "BRL",
+                  "success_callback": "https://Success.com",
+                  "failure_callback": "https://failure.com"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Payout created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PayoutResponse"
+                  },
+                  "example": {
+                    "payoutId": "65f93895c96bae142f7b1765",
+                    "client": {
+                      "email": "test@gmail.com",
+                      "full_name": "Test test",
+                      "documentId": "97c1c590-554b-4449-a0f1-8da9f9756937",
+                      "documentType": "evp"
+                    },
+                    "updated_on": 1710831765,
+                    "payoutMethod": "Payout-PIX",
+                    "amountUnit": "MAJOR",
+                    "amount": 20.0,
+                    "errorMsg": "errors.wallet.transfer_balance_insufficient",
+                    "created_on": 1710831768,
+                    "merchantRef": "65f93895c96bae142f7b1765",
+                    "merchantName": "test",
+                    "status": "ERROR",
+                    "status_history": [
+                      {
+                        "status": "created",
+                        "timestamp": 1710831765
+                      },
+                      {
+                        "status": "error",
+                        "timestamp": 1710831768
+                      }
+                    ],
+                    "currency": "BRL",
+                    "success_callback": "https://Success.com",
+                    "failure_callback": "https://failure.com"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request - invalid input data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized - invalid or missing API key",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/getpayout/{payoutId}/": {
+        "get": {
+          "summary": "Get payout status",
+          "description": "Retrieves the status and details of a specific payout",
+          "operationId": "getPayoutStatus",
+          "tags": ["Payout"],
+          "parameters": [
+            {
+              "name": "payoutId",
+              "in": "path",
+              "description": "Unique identifier of the payout",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "example": "65f93895c96bae142f7b1765"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Payout details retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PayoutResponse"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Payout not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized - invalid or missing API key",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Client": {
+          "type": "object",
+          "required": ["full_name", "documentId", "documentType"],
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Email address of the recipient"
+            },
+            "full_name": {
+              "type": "string",
+              "description": "Full name of the recipient"
+            },
+            "documentId": {
+              "type": "string",
+              "description": "The PIX key identifier (CPF, CNPJ, email, phone, or EVP)"
+            },
+            "documentType": {
+              "type": "string",
+              "description": "Type of document used as PIX key",
+              "enum": ["cpf", "cnpj", "evp", "email", "phone"],
+              "example": "evp"
+            }
+          }
+        },
+        "StatusHistory": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Status of the payout at this point in time",
+              "enum": ["created", "payout_in_process", "paid", "error"]
+            },
+            "timestamp": {
+              "type": "integer",
+              "description": "Unix timestamp when the status was updated"
+            }
+          }
+        },
+        "PayoutRequest": {
+          "type": "object",
+          "required": ["client", "payoutMethod", "amount", "currency"],
+          "properties": {
+            "client": {
+              "$ref": "#/components/schemas/Client"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "Reason for the payout"
+            },
+            "payoutMethod": {
+              "type": "string",
+              "description": "Method of payout",
+              "enum": ["Payout-PIX"]
+            },
+            "amount": {
+              "type": "number",
+              "format": "float",
+              "description": "Amount to be paid out"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency of the payout",
+              "enum": ["BRL"]
+            },
+            "success_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to be called on successful payout"
+            },
+            "failure_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to be called on failed payout"
+            }
+          }
+        },
+        "PayoutResponse": {
+          "type": "object",
+          "properties": {
+            "payoutId": {
+              "type": "string",
+              "description": "Unique identifier for the payout"
+            },
+            "client": {
+              "$ref": "#/components/schemas/Client"
+            },
+            "updated_on": {
+              "type": "integer",
+              "description": "Unix timestamp of the last update"
+            },
+            "payoutMethod": {
+              "type": "string",
+              "description": "Method of payout"
+            },
+            "amountUnit": {
+              "type": "string",
+              "description": "Unit of the amount (MAJOR or MINOR)",
+              "enum": ["MAJOR", "MINOR"]
+            },
+            "amount": {
+              "type": "number",
+              "format": "float",
+              "description": "Amount to be paid out"
+            },
+            "errorMsg": {
+              "type": "string",
+              "description": "Error message if the payout failed"
+            },
+            "created_on": {
+              "type": "integer",
+              "description": "Unix timestamp of creation"
+            },
+            "merchantRef": {
+              "type": "string",
+              "description": "Merchant reference for the payout"
+            },
+            "merchantName": {
+              "type": "string",
+              "description": "Name of the merchant"
+            },
+            "status": {
+              "type": "string",
+              "description": "Current status of the payout",
+              "enum": ["CREATED", "PAYOUT_IN_PROCESS", "PAID", "ERROR"]
+            },
+            "status_history": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/StatusHistory"
+              },
+              "description": "History of status changes"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency of the payout"
+            },
+            "success_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to be called on successful payout"
+            },
+            "failure_callback": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to be called on failed payout"
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error code"
+            },
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT",
+          "description": "API key obtained from the Dashboard section of your merchant account"
+        }
+      }
+    }
+  }

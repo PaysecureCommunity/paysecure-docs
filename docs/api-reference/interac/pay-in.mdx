@@ -1,0 +1,437 @@
+---
+title: "Interac PayIn API"
+id: payin
+description: "API for processing payments using Interac in Canada."
+openapi: "openapi POST /purchases"
+---
+
+
+## Create Purchase API Flow
+
+The merchant initiates the purchase via the **Create Purchase API**. If successful, they receive **PayIn details** along with a **checkout URL** in the response JSON.
+
+### Merchant Options
+
+Once the merchant receives the response, they have two options:
+
+1. **Retrieve PayIn details** from the response JSON to create a custom webpage within their IT estate, displaying the PayIn instructions to the user.
+2. **Direct the user to the checkout URL** included in the response. On this page, the user will see the necessary details to complete the Interac payment:
+   - **Deposit Email Address**
+   - **Secret Question**
+   - **Secret Answer**
+
+### Handling Payment Outcomes
+
+After the end-user completes the payment (success or failure), the merchant will receive an appropriate **webhook notification**.
+
+- If the user was directed to the checkout URL, they will also be redirected to the appropriate **redirect URL** after payment completion.
+
+### API Endpoints
+
+#### **POST Create Purchase**
+
+### Endpoint
+**POST**: Create Purchase  
+`https://api.paysecure.net/api/v1/purchases/`
+
+To initiate a payment, you need to make a POST request to `/purchases` with the required data in the request body.
+
+### Required Parameters
+To generate a purchase, you must provide:
+- **Brand ID** (in the request body)
+- **API key** (in the header)
+
+Both can be found in the Dashboard section of your merchant account.
+
+#### **Mandatory Parameters**
+
+| Parameter               | Notes |
+|-------------------------|-----------------------------------------------|
+| `client.email`         | An identifier for a user |
+| `client.city`         |   |
+| `client.country`      | ISO-3166 Country Code (Uppercase). "CA" for Interac |
+| `client.stateCode`    | Example: "AL", "XZ" (Uppercase) |
+| `client.street_address` | |
+| `client.zip_code`     | |
+| `client.phone`        | |
+| `client.full_name`    | |
+| `purchase.currency`   | ISO 4217 code ("CAD" for Interac) |
+| `purchase.products.name` | |
+| `purchase.products.price` | Price in decimal format (e.g., 5.00 for EUR 5) |
+| `brand_id`           | Obtainable from the Dashboard |
+| `success_redirect`   | URL for successful transactions |
+| `failure_redirect`   | URL for failed transactions |
+
+#### **Response Parameters**
+
+**Endpoint:**
+```
+GET https://api.paysecure.net/api/v1/purchases/{purchaseId}/
+```
+This API retrieves details of a purchase (PayIn), including its history.
+
+**Required:** `purchaseId` in the API URL.
+
+#### **Status Values**
+
+| Status | Description |
+|--------|-------------|
+| `PAID` | Transaction successful |
+| `PAYMENT_IN_PROCESS` | Payment processing |
+| `EXPIRED` | Purchase expired |
+| `ERROR` | Transaction failed |
+
+If errors occur, details can be retrieved from `transaction_data.attempts.error`.
+
+### Headers
+
+```
+Content-Type: application/json
+Authorization: Bearer Token
+```
+
+### Example Request
+
+### JavaScript Example
+```javascript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://api.paysecure.net/api/v1/purchases",
+    {
+      client: {
+        email: "john.doe@example.com",
+        street_address: "123 Maple Street",
+        city: "Toronto",
+        full_name: "John Doe",
+        zip_code: "M5V 2N4",
+        country: "CA",
+        stateCode: "ON",
+        phone: "+14165551234"
+      },
+      purchase: {
+        currency: "CAD",
+        expireInMin: "80",
+        products: [
+          {
+            name: "Premium Subscription",
+            price: 49.99
+          }
+        ]
+      },
+      paymentMethod: "INTERAC",
+      brand_id: "your-brand-id-here",
+      success_redirect: "https://your-website.com/success",
+      failure_redirect: "https://your-website.com/failure",
+      success_callback: "https://your-website.com/api/webhooks/success",
+      failure_callback: "https://your-website.com/api/webhooks/failure"
+    },
+    {
+      headers: {
+        "Authorization": "Bearer your-token-here",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### cURL Example
+
+```bash
+curl --location 'https://api.paysecure.net/api/v1/purchases' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer Token' \
+--data-raw '{
+    "client": {
+       "email": "seo2009@test.com",
+        "street_address": "10 New Burlington Street Apt. 214",
+        "city": "London",
+        "full_name": "Test test",
+        "zip_code": "W1S 3BE",
+        "country": "CA",
+        "stateCode": "QLD",
+        "phone": "+447755564318"
+    },
+    "purchase": {
+        "currency" : "CAD", 
+        "expireInMin" : "80",
+        "products": [
+            {
+                "name": "test",
+                "price": 100
+            }
+        ]
+    },
+    "paymentMethod" : "INTERAC",
+    "brand_id": "f6aff7d7-bb40-4857-bc84-9b4c8310b043",
+    "success_redirect": "https://your.redirect.url/getResponse.jsp?success=true",
+    "failure_redirect": "https://your.redirect.url/getResponse.jsp?success=false",
+    "success_callback": "https://your.success.callback.url",
+    "failure_callback": "https://your.success.failure.url"
+}'
+```
+
+### Example Response
+
+```json
+{
+  "purchaseId": "6790e75fa46a5a5bb0b00e55",
+  "client": {
+    "customerId": "NA",
+    "email": "ashishm.21190@gmail.com",
+    "phone": "+14377717874",
+    "full_name": "Test test",
+    "date_of_birth": "1970-07-10",
+    "street_address": "10 New Burlington Street Apt. 214",
+    "country": "CA",
+    "city": "London",
+    "zip_code": "W1S 3BE",
+    "stateCode": "QLD"
+  },
+  "paymentMethod": "INTERAC",
+  "status": "PAID",
+  "purchase": {
+    "currency": "CAD",
+    "products": [
+      {
+        "name": "test",
+        "quantity": 1,
+        "price": 1
+      }
+    ],
+    "total": 2
+  },
+  "payInDetails": {
+    "name": "INTERAC",
+    "emailAddress": "deposit@ieft.ca",
+    "secretQA": "66a8c78af1fc2f768304bce4",
+    "secretAnswer": "ps8766a8af"
+  },
+  "checkout_url": "https://api.choicepay.ca/payments/6790e75fa46a5a5bb0b00e55/"
+}
+```
+
+## Get Purchase Status
+
+### Overview
+This endpoint allows you to retrieve all details of a purchase (PayIn), including its transaction history.
+
+### Endpoint
+**GET**: Get Purchase Status  
+`https://api.paysecure.net/api/v1/purchases/{purchaseId}/`
+
+### Required Parameters
+You need to pass the `purchaseId` in the API URL.
+
+### Example Request
+
+```javascript
+const axios = require("axios");
+
+(async () => {
+  const purchaseId = "6790e75fa46a5a5bb0b00e55";
+  
+  const response = await axios.get(
+    `https://api.paysecure.net/api/v1/purchases/${purchaseId}`,
+    {
+      headers: {
+        "Authorization": "Bearer your-token-here",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### cURL Request
+```bash
+curl --location -g 'https://api.paysecure.net/api/v1/purchases/{purchaseId}/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer Token'
+```
+
+### Example Response
+```json
+{
+  "purchaseId": "6790e75fa46a5a5bb0b00e55",
+  "client": {
+    "customerId": "NA",
+    "email": "ashishm.21190@gmail.com",
+    "phone": "+14377717874",
+    "full_name": "Test test",
+    "date_of_birth": "1970-07-10",
+    "street_address": "10 New Burlington Street Apt. 214",
+    "country": "CA",
+    "city": "London",
+    "zip_code": "W1S 3BE",
+    "cc": [],
+    "bcc": [],
+    "gender": "MALE",
+    "stateCode": "QLD"
+  },
+  "updated_on": 1737549752,
+  "type": "purchase",
+  "paymentMethod": "INTERAC",
+  "amountUnit": "MAJOR",
+  "errorMsg": "Transaction succeeded-APPROVED",
+  "redirectType": "GET",
+  "force_recurring": false,
+  "created_on": 1737549663,
+  "merchantRef": "6790e75fa46a5a5bb0b00e55",
+  "merchantName": "arunsinghal",
+  "purchase": {
+    "currency": "CAD",
+    "products": [
+      {
+        "name": "test",
+        "quantity": 1,
+        "price": 1,
+        "discount": 0,
+        "tax_percent": "0.00"
+      }
+    ],
+    "total": 2,
+    "language": "en",
+    "notes": "",
+    "debt": 0,
+    "total_formatted": 1,
+    "expireInMin": "43200",
+    "request_client_details": [],
+    "email_message": ""
+  },
+  "payment": {
+    "is_outgoing": false,
+    "payment_type": "PURCHASE",
+    "amount": 1,
+    "currency": "CAD",
+    "net_amount": 1,
+    "fee_amount": 0,
+    "pending_amount": 0,
+    "pending_unfreeze_on": null,
+    "description": "",
+    "paid_on": 1737549663,
+    "remote_paid_on": 1737549663
+  },
+  "issuer_details": {
+    "website": "",
+    "legal_street_address": "",
+    "legal_country": "",
+    "legal_city": "",
+    "legal_zip_code": "",
+    "bank_accounts": [
+      {}
+    ],
+    "legal_name": "test6",
+    "brand_name": "test6",
+    "registration_number": "",
+    "tax_number": ""
+  },
+  "transaction_data": {
+    "payment_method": "",
+    "flow": "payform",
+    "extra": {
+      "amount": 1,
+      "masked_pan": "INTERAC"
+    },
+    "country": "",
+    "attempts": [
+      {
+        "client_ip": "103.59.75.42, 172.71.186.102, 130.176.183.14",
+        "type": "execute",
+        "payment_method": "INTERAC",
+        "flow": "payform",
+        "successful": true,
+        "country": "INTERAC",
+        "processing_time": 1737549663,
+        "extra": {
+          "amount": 1,
+          "masked_pan": "INTERAC"
+        }
+      }
+    ]
+  },
+  "status": "PAID",
+  "status_history": [
+    {
+      "status": "created",
+      "timestamp": 1737549663
+    },
+    {
+      "status": "pending_execute",
+      "timestamp": 1737549663
+    },
+    {
+      "status": "payment_in_process",
+      "timestamp": 1737549664
+    },
+    {
+      "status": "paid 2.0",
+      "timestamp": 1737549752
+    },
+    {
+      "status": "viewed",
+      "timestamp": 1737549750
+    }
+  ],
+  "viewedOn": 1738749942,
+  "is_test": false,
+  "brand_id": "30f7ce6e-3b7e-46a2-9b50-484fc55be689",
+  "send_receipt": false,
+  "is_recurring_token": false,
+  "skip_capture": false,
+  "reference_generated": "PS376",
+  "issued": "2025-01-22",
+  "due": 1737549663,
+  "refund_upto": 0,
+  "cc_descriptor": "Africhange Technologies",
+  "fraudScore": "NA",
+  "trustScore": "NA",
+  "payInDetails": {
+    "name": "INTERAC",
+    "emailAddress": "deposit@ieft.ca",
+    "secretQA": "66a8c78af1fc2f768304bce4",
+    "secretAnswer": "ps8766a8af"
+  },
+  "paidOn": 1737549752,
+  "receivedAmt": 2,
+  "refund_availability": "NONE",
+  "refundable_amount": 0,
+  "success_redirect": "https://your.redirect.url/getResponse.jsp?success=true",
+  "failure_redirect": "https://your.redirect.url/getResponse.jsp?success=false",
+  "cancel_redirect": "",
+  "success_callback": "https://webhook.site/83df9776-3590-4e25-9222-870e931ac868",
+  "failure_callback": "https://webhook.site/83df9776-3590-4e25-9222-870e931ac868",
+  "platform": "API",
+  "created_from_ip": "103.59.75.42, 172.71.186.102, 130.176.183.14",
+  "checkout_url": "https://api.choicepay.ca/payments/6790e75fa46a5a5bb0b00e55/",
+  "payoutProcess": false
+}
+```
+
+In the response examples you can see instances of both `Paid` and `Error` Status purchases.
+
+If there are any errors, they will be returned in the following format:
+
+If there are any errors then it'll be in the format of :
+```json
+
+{
+  "message": "descriptive error message",
+  "code": "error_code"
+}
+```
+
+## Summary
+- **Interac** enables users to deposit money via Canada's trusted payment system.
+- The API requires **Bearer Token authentication** and a valid **Brand ID**.
+- Transactions are processed in **Canadian Dollars (CAD)** only.
+- Customers are redirected to a secure checkout page to complete their payment.
+- Webhooks notify your system of successful or failed transactions.
+
+Use this API to integrate **Interac payments** into your platform for Canadian customers. 🍁
