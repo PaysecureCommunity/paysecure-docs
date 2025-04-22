@@ -1,0 +1,102 @@
+---
+title: "Fawry PayIn API"
+description: "API for processing payments and payouts using Fawry Pay and Paysecure."
+openapi: "openapi POST /purchases"
+---
+
+### Pay-In (Deposit)
+- `payIn` allows users to **deposit funds** into their account using mobile money.
+- Required parameters:
+  - `client`: Object containing user details (`full_name`, `email`, `documentId`, `documentType`).
+  - `amount`: The transaction amount.
+  - `currency`: The currency code (e.g., `TZS`).
+  - `paymentMethod`: Payment type (`MOBILEMONEY`).
+  - `success_redirect`: URL for success callback.
+  - `failure_redirect`: URL for failure callback.
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://staging.paysecure.net/api/v1/purchases",
+    {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "payIn",
+      params: {
+        client: {
+          full_name: "John Doe",
+          email: "john.doe@example.com",
+          documentId: "1234-5678-9101",
+          documentType: "national_id"
+        },
+        amount: 100,
+        currency: "TZS",
+        paymentMethod: "FAWRY",
+        success_redirect: "https://success.com",
+        failure_redirect: "https://failure.com"
+      }
+    },
+    {
+      headers: {
+        "X-API-Key": "Your-API-Key",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+### Pay-Out (Withdrawal)
+- `payOut` allows users to **withdraw funds** using mobile money.
+- Required parameters:
+  - `client`: Object containing user details (`full_name`, `email`, `documentId`, `documentType`).
+  - `amount`: The withdrawal amount.
+  - `currency`: The currency code (e.g., `TZS`).
+  - `payoutMethod`: Payout type (`MOBILEMONEY`).
+  - `success_redirect`: URL for success callback.
+  - `failure_redirect`: URL for failure callback.
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://staging.paysecure.net/api/v1/payout",
+    {
+      jsonrpc: "2.0",
+      id: 2,
+      method: "payOut",
+      params: {
+        client: {
+          full_name: "John Doe",
+          email: "john.doe@example.com",
+          documentId: "1234-5678-9101",
+          documentType: "national_id"
+        },
+        amount: 100,
+        currency: "TZS",
+        payoutMethod: "MOBILEMONEY",
+        success_redirect: "https://success.com",
+        failure_redirect: "https://failure.com"
+      }
+    },
+    {
+      headers: {
+        "X-API-Key": "Your-API-Key",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
+
+## Summary
+- **`payIn`** enables users to deposit money via mobile money.
+- **`payOut`** allows users to withdraw funds.
+- Both APIs use **JSON-RPC** and require **API Key authentication**.

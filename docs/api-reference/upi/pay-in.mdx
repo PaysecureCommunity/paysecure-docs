@@ -1,0 +1,79 @@
+---
+title: 'UPI PayIn'
+description: Learn how to use the `createPurchase` API endpoint for processing UPI transactions.
+openapi: 'openapi POST /purchases'
+---
+
+## Understanding `createPurchase`
+
+The `createPurchase` API allows merchants to initiate a purchase transaction via Paysecure. It supports various payment methods, including UPI, and provides necessary details for checkout.
+
+### Parameters:
+- `client` (object) - User details.
+  - `email` (string) - Identifier for the user.
+  - `full_name` (string) - Full name of the user.
+  - `street_address` (string) - User's street address.
+  - `city` (string) - City of the user.
+  - `stateCode` (string) - State code (ISO standard).
+  - `country` (string) - Country code (ISO-3166).
+  - `zip_code` (string) - Postal code of the user.
+- `purchase` (object) - Transaction details.
+  - `currency` (string) - Currency of the transaction (e.g., INR, USD).
+  - `products` (array) - List of products being purchased.
+    - `name` (string) - Name of the product.
+    - `price` (number) - Price of the product.
+- `paymentMethod` (string) - Preferred payment method (e.g., "UPI").
+- `brand_id` (string) - Merchant brand identifier.
+- `success_redirect` (string) - URL to redirect the user after a successful transaction.
+- `failure_redirect` (string) - URL to redirect the user if the transaction fails.
+- `success_callback` (string) - Callback URL to notify merchant on success.
+- `failure_callback` (string) - Callback URL to notify merchant on failure.
+
+<Warning>Authorization requires an API key in the `X-API-Key` header.</Warning>
+
+***
+
+## Query example
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://api.paysecure.com/v1/purchases",
+    {
+      client: {
+        email: "user@example.com",
+        full_name: "John Doe",
+        street_address: "123 Main St",
+        city: "New York",
+        stateCode: "NY",
+        country: "US",
+        zip_code: "10001"
+      },
+      purchase: {
+        currency: "INR",
+        products: [
+          {
+            name: "Test Product",
+            price: 100.00
+          }
+        ]
+      },
+      paymentMethod: "UPI",
+      brand_id: "merchant_brand_id",
+      success_redirect: "https://merchant.com/success",
+      failure_redirect: "https://merchant.com/failure",
+      success_callback: "https://merchant.com/api/success",
+      failure_callback: "https://merchant.com/api/failure"
+    },
+    {
+      headers: {
+        "X-API-Key": "your_api_key"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```

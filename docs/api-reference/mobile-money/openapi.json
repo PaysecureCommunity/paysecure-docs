@@ -1,0 +1,113 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Paysecure Mobile Money API",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://staging.paysecure.com/v1"
+      }
+    ],
+    "security": [
+      {
+        "apiKeyAuth": []
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "apiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "PayInRequest": {
+          "type": "object",
+          "properties": {
+            "userId": { "type": "string", "example": "12345" },
+            "amount": { "type": "number", "example": 100.00 },
+            "currency": { "type": "string", "example": "USD" },
+            "mobileNumber": { "type": "string", "example": "+1234567890" },
+            "provider": { "type": "string", "example": "M-Pesa" }
+          },
+          "required": ["userId", "amount", "currency", "mobileNumber", "provider"]
+        },
+        "PayOutRequest": {
+          "type": "object",
+          "properties": {
+            "userId": { "type": "string", "example": "12345" },
+            "amount": { "type": "number", "example": 50.00 },
+            "currency": { "type": "string", "example": "USD" },
+            "mobileNumber": { "type": "string", "example": "+1234567890" },
+            "provider": { "type": "string", "example": "M-Pesa" }
+          },
+          "required": ["userId", "amount", "currency", "mobileNumber", "provider"]
+        }
+      }
+    },
+    "paths": {
+      "/#payin": {
+        "post": {
+          "summary": "Process a mobile money deposit",
+          "operationId": "payIn",
+          "security": [{ "apiKeyAuth": [] }],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PayInRequest" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Pay-In successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "transactionId": { "type": "string", "example": "txn_123" },
+                      "status": { "type": "string", "example": "success" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/#payout": {
+        "post": {
+          "summary": "Process a mobile money withdrawal",
+          "operationId": "payOut",
+          "security": [{ "apiKeyAuth": [] }],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PayOutRequest" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Pay-Out successful",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "transactionId": { "type": "string", "example": "txn_456" },
+                      "status": { "type": "string", "example": "success" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

@@ -1,0 +1,102 @@
+---
+title: "Paysecure PayOut API"
+description: "API for initiating payouts, checking transaction status, and retrieving balance information using Paysecure."
+openapi: "openapi POST /payouts"
+---
+
+## Pay-Out (Withdrawal)
+- `payOut` allows merchants to **withdraw funds** to users using various payout methods.
+- Required parameters:
+  - `client`: Object containing user details (`full_name`, `email`, `documentId`, `country`, `phone`).
+  - `amount`: The withdrawal amount.
+  - `currency`: The currency code (e.g., `EGP`).
+  - `payoutMethod`: Payout type (`Payout-fawrypay`).
+  - `success_callback`: URL for success callback.
+  - `failure_callback`: URL for failure callback.
+
+```javascript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://staging.paysecure.net/api/v1/payout",
+    {
+      client: {
+        email: "test@gmail.com",
+        country: "EG",
+        phone: "9586445444",
+        full_name: "Test Person-uk",
+        documentId: "29206260104051"
+      },
+      purpose: "test payout",
+      currency: "EGP",
+      payoutMethod: "Payout-fawrypay",
+      amount: 20,
+      success_callback: "https://success.com",
+      failure_callback: "https://failure.com"
+    },
+    {
+      headers: {
+        "Authorization": "Bearer <your_token>",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  console.log(response.data);
+})();
+```
+
+## Get PayOut Status
+- Retrieve the status of a previously initiated payout.
+- Required parameter: `payoutId` (Path parameter).
+
+```javascript
+const axios = require("axios");
+
+(async () => {
+  const payoutId = "6685467c0e5b201a73f91256";
+  const response = await axios.get(
+    `https://staging.paysecure.net/api/v1/getpayout/${payoutId}`,
+    {
+      headers: {
+        "Authorization": "Bearer <your_token>",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  console.log(response.data);
+})();
+```
+
+### Possible Status Values:
+- `paid` – Transaction successful.
+- `payout_in_process` – Payout is being processed.
+- `error` – Transaction failed.
+
+## Check Balance
+- Retrieve the balance available for payouts.
+- Required parameter: `paymentMethod`.
+
+```javascript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://staging.paysecure.net/api/v1/getBalance",
+    { paymentMethod: "INTERAC" },
+    {
+      headers: {
+        "Authorization": "Bearer <your_token>",
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  console.log(response.data);
+})();
+```
+
+## Summary
+- **`payOut`** allows merchants to withdraw funds to users.
+- **`getPayoutStatus`** retrieves the payout status.
+- **`getBalance`** checks available funds.
+- API requires **Bearer Token authentication**.

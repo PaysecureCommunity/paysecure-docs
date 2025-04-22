@@ -1,0 +1,39 @@
+---
+title: 'Mobile Money payIn'
+description: Learn how to use the payIn API endpoint for processing mobile money deposits.
+openapi: 'openapi POST /#purchases'
+---
+
+## Understanding `createPurchase`
+
+
+
+<Warning>Authorization requires an API key in the `X-API-Key` header.</Warning>
+
+***
+
+## Query example
+
+```javascript JavaScript
+const axios = require("axios");
+
+(async () => {
+  const response = await axios.post(
+    "https://api.paysecure.com/v1/purchases",
+    {
+      userId: "12345",
+      amount: 100.00,
+      currency: "USD",
+      mobileNumber: "+1234567890",
+      provider: "M-Pesa"
+    },
+    {
+      headers: {
+        "X-API-Key": "your_api_key"
+      }
+    }
+  );
+
+  console.log(response.data);
+})();
+```
