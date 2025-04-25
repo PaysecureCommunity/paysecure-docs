@@ -1,13 +1,13 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "Paysecure PIX Payout API",
+      "title": "Fundstream PIX Payout API",
       "description": "API for initiating and managing PIX payouts in Brazil",
       "version": "1.0.0"
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.net/api/v1",
+        "url": "https://staging.fundstream.net/api/v1",
         "description": "Production server"
       }
     ],

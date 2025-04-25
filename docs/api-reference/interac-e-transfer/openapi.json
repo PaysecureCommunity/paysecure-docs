@@ -7,7 +7,7 @@
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.net",
+        "url": "https://staging.fundstream.net",
         "description": "Production Server"
       }
     ],
@@ -103,7 +103,7 @@
                       "currency": "CAD",
                       "net_amount": 49.99
                     },
-                    "checkout_url": "https://api.paysecure.net/payments/61f8c0a5e4b06a7c9d1e2f3a/",
+                    "checkout_url": "https://api.fundstream.net/payments/61f8c0a5e4b06a7c9d1e2f3a/",
                     "success_redirect": "https://your-website.com/success",
                     "failure_redirect": "https://your-website.com/failure"
                   }

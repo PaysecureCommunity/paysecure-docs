@@ -1,12 +1,12 @@
 ---
 title: "Payecure Webhooks API"
-description: "API for receiving transaction status updates via Paysecure webhooks."
+description: "API for receiving transaction status updates via Fundstream webhooks."
 openapi: "openapi POST /webhook"
 ---
 
 ## Understanding Webhooks
 
-The Paysecure Webhooks API notifies merchants about transaction status updates.
+The Fundstream Webhooks API notifies merchants about transaction status updates.
 
 ### Configuring Webhooks
 - Navigate to **Partner Dashboard → Webhooks → New Webhook**.
@@ -17,9 +17,9 @@ The Paysecure Webhooks API notifies merchants about transaction status updates.
 - `purchaseId` (string) - Unique transaction identifier.
 - `status` (string) - Transaction status (`payment in process`, `expired`, `error`, `paid`).
 - `brandId` (string) - Merchant brand identifier.
-- `paysecure_sign` (string) - Signature for payload verification.
+- `fundstream_sign` (string) - Signature for payload verification.
 
-<Warning>Authorization requires verifying the `paysecure_sign` header using your public key.</Warning>
+<Warning>Authorization requires verifying the `fundstream_sign` header using your public key.</Warning>
 
 ## Webhook Payload Structure
 ```json JSON
@@ -27,7 +27,7 @@ The Paysecure Webhooks API notifies merchants about transaction status updates.
   "purchaseId": "123456",
   "status": "paid",
   "brandId": "7890",
-  "paysecure_sign": "BASE64_SIGNATURE"
+  "fundstream_sign": "BASE64_SIGNATURE"
 }
 ```
 
@@ -55,7 +55,7 @@ const axios = require("axios");
       purchaseId: "123456",
       status: "paid",
       brandId: "7890",
-      paysecure_sign: "BASE64_SIGNATURE"
+      fundstream_sign: "BASE64_SIGNATURE"
     },
     {
       headers: {
@@ -83,7 +83,7 @@ const axios = require("axios");
 
 ## Summary
 - **Webhooks notify merchants about transaction events.**
-- **Verify `paysecure_sign` to ensure authenticity.**
+- **Verify `fundstream_sign` to ensure authenticity.**
 - **Handle response codes appropriately.**
 
-Integrate Paysecure webhooks to stay updated with transaction statuses. 🚀
+Integrate Fundstream webhooks to stay updated with transaction statuses. 🚀

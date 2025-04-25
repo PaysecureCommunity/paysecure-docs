@@ -1,15 +1,15 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "Paysecure Webhooks API",
-      "description": "API for receiving transaction status updates via Paysecure webhooks.",
+      "title": "Fundstream Webhooks API",
+      "description": "API for receiving transaction status updates via Fundstream webhooks.",
       "version": "1.0.0"
     },
     "paths": {
       "/#webhook": {
         "post": {
           "summary": "Receive transaction status updates",
-          "description": "Paysecure sends transaction status updates to this endpoint.",
+          "description": "Fundstream sends transaction status updates to this endpoint.",
           "operationId": "receiveWebhook",
           "requestBody": {
             "required": true,
@@ -74,12 +74,12 @@
               "type": "string",
               "description": "Merchant brand identifier."
             },
-            "paysecure_sign": {
+            "fundstream_sign": {
               "type": "string",
               "description": "Signature for payload verification."
             }
           },
-          "required": ["purchaseId", "status", "brandId", "paysecure_sign"]
+          "required": ["purchaseId", "status", "brandId", "fundstream_sign"]
         }
       }
     }

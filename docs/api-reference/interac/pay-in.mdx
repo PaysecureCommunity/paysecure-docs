@@ -32,7 +32,7 @@ After the end-user completes the payment (success or failure), the merchant will
 
 ### Endpoint
 **POST**: Create Purchase  
-`https://api.paysecure.net/api/v1/purchases/`
+`https://api.fundstream.net/api/v1/purchases/`
 
 To initiate a payment, you need to make a POST request to `/purchases` with the required data in the request body.
 
@@ -66,7 +66,7 @@ Both can be found in the Dashboard section of your merchant account.
 
 **Endpoint:**
 ```
-GET https://api.paysecure.net/api/v1/purchases/{purchaseId}/
+GET https://api.fundstream.net/api/v1/purchases/{purchaseId}/
 ```
 This API retrieves details of a purchase (PayIn), including its history.
 
@@ -98,7 +98,7 @@ const axios = require("axios");
 
 (async () => {
   const response = await axios.post(
-    "https://api.paysecure.net/api/v1/purchases",
+    "https://api.fundstream.net/api/v1/purchases",
     {
       client: {
         email: "john.doe@example.com",
@@ -142,7 +142,7 @@ const axios = require("axios");
 ### cURL Example
 
 ```bash
-curl --location 'https://api.paysecure.net/api/v1/purchases' \
+curl --location 'https://api.fundstream.net/api/v1/purchases' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token' \
 --data-raw '{
@@ -222,7 +222,7 @@ This endpoint allows you to retrieve all details of a purchase (PayIn), includin
 
 ### Endpoint
 **GET**: Get Purchase Status  
-`https://api.paysecure.net/api/v1/purchases/{purchaseId}/`
+`https://api.fundstream.net/api/v1/purchases/{purchaseId}/`
 
 ### Required Parameters
 You need to pass the `purchaseId` in the API URL.
@@ -236,7 +236,7 @@ const axios = require("axios");
   const purchaseId = "6790e75fa46a5a5bb0b00e55";
   
   const response = await axios.get(
-    `https://api.paysecure.net/api/v1/purchases/${purchaseId}`,
+    `https://api.fundstream.net/api/v1/purchases/${purchaseId}`,
     {
       headers: {
         "Authorization": "Bearer your-token-here",
@@ -251,7 +251,7 @@ const axios = require("axios");
 
 ### cURL Request
 ```bash
-curl --location -g 'https://api.paysecure.net/api/v1/purchases/{purchaseId}/' \
+curl --location -g 'https://api.fundstream.net/api/v1/purchases/{purchaseId}/' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token'
 ```

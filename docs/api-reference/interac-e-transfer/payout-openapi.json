@@ -1,13 +1,13 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "Paysecure Interac e-Transfer PayOut API",
+      "title": "Fundstream Interac e-Transfer PayOut API",
       "version": "1.0.0",
       "description": "API for processing payouts using Interac e-Transfer in Canada."
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.net/api/v1"
+        "url": "https://staging.fundstream.net/api/v1"
       }
     ],
     "paths": {

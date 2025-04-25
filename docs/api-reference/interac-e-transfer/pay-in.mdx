@@ -11,11 +11,11 @@ The merchant requests the INTERAC-E-TRANSFER purchase API to initiate a PayIn (d
 
 #### Authorization
 **Bearer Token**
-This API requires Bearer Token authentication, which can be retrieved from the Paysecure API Documentation - Live.
+This API requires Bearer Token authentication, which can be retrieved from the Fundstream API Documentation - Live.
 
 #### Endpoint
 **POST**: Create Purchase  
-`https://api.paysecure.net/api/v1/purchases/`
+`https://api.fundstream.net/api/v1/purchases/`
 
 #### Required Parameters
 To generate a purchase, you must provide the **Brand ID** (request body) and **API key** (header), both available in the merchant dashboard.
@@ -43,7 +43,7 @@ To generate a purchase, you must provide the **Brand ID** (request body) and **A
 |-----------|-------|
 | `expireInMin` | Time window for completing the payment before it expires. Payments outside this window may cause inconsistencies. |
 | `merchantRef` | Strongly advised for preventing duplicate transactions and retrieving transaction details. |
-| `paymentMethod` | Specifies the payment solution used. If provided, Paysecure will process the payment directly. |
+| `paymentMethod` | Specifies the payment solution used. If provided, Fundstream will process the payment directly. |
 
 ### Example Request
 ```json
@@ -83,7 +83,7 @@ const axios = require("axios");
 
 (async () => {
   const response = await axios.post(
-    "https://api.paysecure.net/api/v1/purchases",
+    "https://api.fundstream.net/api/v1/purchases",
     {
       client: {
         email: "john.doe@example.com",
@@ -127,7 +127,7 @@ const axios = require("axios");
 
 ### cURL Request
 ```sh
-curl --location 'https://api.paysecure.net/api/v1/purchases' \
+curl --location 'https://api.fundstream.net/api/v1/purchases' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token' \
 --data-raw '{
@@ -192,7 +192,7 @@ curl --location 'https://api.paysecure.net/api/v1/purchases' \
     "currency": "CAD",
     "net_amount": 1
   },
-  "checkout_url": "https://api.paysecure.net/payments/670cb0affcc7f4706acb65e0/",
+  "checkout_url": "https://api.fundstream.net/payments/670cb0affcc7f4706acb65e0/",
   "success_redirect": "https://your.redirect.url/getResponse.jsp?success=true",
   "failure_redirect": "https://your.redirect.url/getResponse.jsp?success=false"
 }
@@ -214,7 +214,7 @@ This endpoint allows you to retrieve all details of a purchase (PayIn), includin
 
 ### Endpoint
 **GET**: Get Purchase Status  
-`https://api.paysecure.net/api/v1/purchases/{purchaseId}/`
+`https://api.fundstream.net/api/v1/purchases/{purchaseId}/`
 
 ### Required Parameters
 You need to pass the `purchaseId` in the API URL.
@@ -245,7 +245,7 @@ const axios = require("axios");
   const purchaseId = "61f8c0a5e4b06a7c9d1e2f3a";
   
   const response = await axios.get(
-    `https://api.paysecure.net/api/v1/purchases/${purchaseId}`,
+    `https://api.fundstream.net/api/v1/purchases/${purchaseId}`,
     {
       headers: {
         "Authorization": "Bearer your-token-here",
@@ -260,7 +260,7 @@ const axios = require("axios");
 
 ### cURL Request
 ```sh
-curl --location -g 'https://api.paysecure.net/api/v1/purchases/{purchaseId}/' \
+curl --location -g 'https://api.fundstream.net/api/v1/purchases/{purchaseId}/' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token'
 ```
@@ -410,7 +410,7 @@ curl --location -g 'https://api.paysecure.net/api/v1/purchases/{purchaseId}/' \
     "failure_callback": "https://your.success.failure.url",
     "platform": "API",
     "created_from_ip": "103.59.75.207",
-    "checkout_url": "https://api.paysecure.net/payments/670dfe26de28c320be6d8a5e/",
+    "checkout_url": "https://api.fundstream.net/payments/670dfe26de28c320be6d8a5e/",
     "payoutProcess": false
 }{
     "purchaseId": "670dfe26de28c320be6d8a5e",
@@ -555,7 +555,7 @@ curl --location -g 'https://api.paysecure.net/api/v1/purchases/{purchaseId}/' \
     "failure_callback": "https://your.success.failure.url",
     "platform": "API",
     "created_from_ip": "103.59.75.207",
-    "checkout_url": "https://api.paysecure.net/payments/670dfe26de28c320be6d8a5e/",
+    "checkout_url": "https://api.fundstream.net/payments/670dfe26de28c320be6d8a5e/",
     "payoutProcess": false
 }
 ```

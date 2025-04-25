@@ -1,7 +1,7 @@
 ---
 title: "Payout API"
 id: pay-out
-description: "API for processing payouts using Paysecure."
+description: "API for processing payouts using Fundstream."
 openapi: "openapi POST /payout"
 ---
 Initiate a Payout
@@ -9,7 +9,7 @@ To initiate a payout, send a POST request to the following endpoint:
 
 Endpoint
 POST: Initiate Payout
-https://staging.paysecure.net/api/v1/payout/
+https://staging.fundstream.net/api/v1/payout/
 
 
 This API allows merchants to initiate a payout to a recipient.
@@ -54,7 +54,7 @@ Example Request
 ```
 Example cURL Request
 ```bash
-curl --location 'https://staging.paysecure.net/api/v1/payout/' \
+curl --location 'https://staging.fundstream.net/api/v1/payout/' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR_API_KEY>' \
 --data-raw '{
@@ -77,7 +77,7 @@ This API retrieves the status and history of a payout.
 
 Endpoint
 GET: Get Payout Status
-https://api.paysecure.net/api/v1/getpayout/{payoutId}/
+https://api.fundstream.net/api/v1/getpayout/{payoutId}/
 
 Required Parameters
 Parameter	Required	Description
@@ -96,7 +96,7 @@ const axios = require("axios");
   const payoutId = "payout_123456";
 
   const response = await axios.get(
-    `https://api.paysecure.net/api/v1/getpayout/${payoutId}/`,
+    `https://api.fundstream.net/api/v1/getpayout/${payoutId}/`,
     {
       headers: {
         "Authorization": "Bearer your-token-here",
@@ -110,7 +110,7 @@ const axios = require("axios");
 ```
 cuRL Request
 ```bash
-curl --location -g 'https://api.paysecure.net/api/v1/getpayout/{payoutId}/' \
+curl --location -g 'https://api.fundstream.net/api/v1/getpayout/{payoutId}/' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token'
 ```

@@ -1,14 +1,14 @@
 ---
 title: "PayOut API"
 id: pay-out
-description: "API for processing payouts using Paysecure."
+description: "API for processing payouts using Fundstream."
 openapi: "openapi POST /payout"
 ---
 
 ## PayOut Flows
 
 ### How it works
-To initiate a payout, the merchant has to give Paysecure the PIX details such as the recipient's PIX key (e.g., CPF/CNPJ, phone number, or email), amount, and any additional information.
+To initiate a payout, the merchant has to give Fundstream the PIX details such as the recipient's PIX key (e.g., CPF/CNPJ, phone number, or email), amount, and any additional information.
 
 If the merchant has enough balance, then the transaction amount will be deducted from the merchant balance and sent to the user.
 
@@ -21,8 +21,8 @@ If the merchant has enough balance, then the transaction amount will be deducted
 2. **Merchant approval**: If everything is OK, the merchant approves payout request.
 
 ##### **Processing:**
-1. **Payment details**: Using Paysecure's API, the merchant provides the recipient's Pix key (which can be a phone number, email, CPF/CNPJ, or random key) and the transfer amount.
-2. **Funds check**: Paysecure verifies if sufficient funds are available in the merchant account to cover the transfer.
+1. **Payment details**: Using Fundstream's API, the merchant provides the recipient's Pix key (which can be a phone number, email, CPF/CNPJ, or random key) and the transfer amount.
+2. **Funds check**: Fundstream verifies if sufficient funds are available in the merchant account to cover the transfer.
 3. **Processing & Key mapping**: The recipient's Pix key is validated using the DICT (Transactional Identifier Directory). This central database links Pix keys with users' bank accounts.
 
 ##### **Payout:**
@@ -30,7 +30,7 @@ If the merchant has enough balance, then the transaction amount will be deducted
 
 #### **POST Create PayOut**
 ```bash
-https://api.paysecure.net/api/v1/payout/
+https://api.fundstream.net/api/v1/payout/
 ```
 To initiate a payout, the very first call to make is `/payout/` with the required data in the request body.
 
@@ -75,7 +75,7 @@ To generate a PayOut, you are required to provide the API key (in the header), w
 
 ### **Example Request**
 ```bash
-curl --location 'https://api.paysecure.net/api/v1/payout/' \
+curl --location 'https://api.fundstream.net/api/v1/payout/' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token' \
 --data-raw '{
@@ -133,7 +133,7 @@ curl --location 'https://api.paysecure.net/api/v1/payout/' \
 
 ### **Endpoint**
 ```bash
-https://api.paysecure.net/api/v1/getpayout/{payoutId}/
+https://api.fundstream.net/api/v1/getpayout/{payoutId}/
 ```
 This API provides details of a Payout, including its history.
 
@@ -151,7 +151,7 @@ This API provides details of a Payout, including its history.
 
 ### **Example Request**
 ```bash
-curl --location -g 'https://api.paysecure.net/api/v1/getpayout/{payoutId}/'
+curl --location -g 'https://api.fundstream.net/api/v1/getpayout/{payoutId}/'
 ```
 ### **Example Response**
 ```json

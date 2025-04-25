@@ -1,13 +1,13 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "Paysecure API",
+      "title": "Fundstream API",
       "version": "1.0.0",
-      "description": "API for processing PayIns and PayOuts via Paysecure."
+      "description": "API for processing PayIns and PayOuts via Fundstream."
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.net/api/v1"
+        "url": "https://staging.fundstream.net/api/v1"
       }
     ],
     "paths": {

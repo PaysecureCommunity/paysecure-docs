@@ -43,7 +43,7 @@ module.exports = {
       title: title,
       logo: {
         alt: 'API Docs',
-        src: config.logo || 'img/logo.png',
+        src: 'img/fundsstream_logo.png',
       },
       items: [
         {
@@ -82,7 +82,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Paysecure`,
+      copyright: `Copyright © ${new Date().getFullYear()} Fundstream`,
     },
     prism: {
       theme: lightCodeTheme,

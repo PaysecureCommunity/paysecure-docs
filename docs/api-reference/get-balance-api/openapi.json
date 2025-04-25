@@ -7,7 +7,7 @@
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.net/api/v1"
+        "url": "https://staging.fundstream.net/api/v1"
       }
     ],
     "paths": {
