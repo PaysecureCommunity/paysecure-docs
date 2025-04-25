@@ -1,6 +1,6 @@
 ---
 title: "Fawry PayIn API"
-description: "API for processing payments and payouts using Fawry Pay and Paysecure."
+description: "API for processing payments and payouts using Fawry Pay and Fundstream."
 openapi: "openapi POST /purchases"
 ---
 
@@ -19,7 +19,7 @@ const axios = require("axios");
 
 (async () => {
   const response = await axios.post(
-    "https://staging.paysecure.net/api/v1/purchases",
+    "https://staging.f.net/api/v1/purchases",
     {
       jsonrpc: "2.0",
       id: 1,
@@ -65,7 +65,7 @@ const axios = require("axios");
 
 (async () => {
   const response = await axios.post(
-    "https://staging.paysecure.net/api/v1/payout",
+    "https://staging.fundstream.net/api/v1/payout",
     {
       jsonrpc: "2.0",
       id: 2,

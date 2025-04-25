@@ -6,7 +6,7 @@ openapi: 'openapi POST /purchases'
 
 ## Understanding `createPurchase`
 
-The `createPurchase` API allows merchants to initiate a purchase transaction via Paysecure. It supports various payment methods, and provides necessary details for checkout.
+The `createPurchase` API allows merchants to initiate a purchase transaction via Fundstream. It supports various payment methods, and provides necessary details for checkout.
 
 ### Parameters:
 - `client` (object) - User details.
@@ -34,7 +34,7 @@ The `createPurchase` API allows merchants to initiate a purchase transaction via
 const axios = require("axios");
 (async () => {
   const response = await axios.post(
-    "https://staging.paysecure.net/api/v1/purchases",
+    "https://staging.fundstream.net/api/v1/purchases",
     {
   "client": {
     "email": "test@gmail.com",
@@ -230,6 +230,6 @@ const axios = require("axios");
     "failure_callback": "https://test2.com",
     "platform": "API",
     "created_from_ip": "103.59.75.41",
-    "checkout_url": "https://staging.paysecure.net/payments/66334635a2cf2a7da7b192ab/"
+    "checkout_url": "https://staging.fundstream.net/payments/66334635a2cf2a7da7b192ab/"
 }
 ``` 

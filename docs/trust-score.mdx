@@ -1,19 +1,19 @@
 ---
-title: "Paysecure TrustScore API"
+title: "Fundstream TrustScore API"
 id: trust-score
-description: "Paysecure TrustScore API Documentation"
+description: "Fundstream TrustScore API Documentation"
 ---
-# Paysecure TrustScore API
+# Fundstream TrustScore API
 
 ## Overview
 
-Paysecure TrustScore's proprietary API combines email, phone number, IP, and URL so that you can request and receive a user trust score from our enriched data, rules, and scoring in a single API call.
+Fundstream TrustScore's proprietary API combines email, phone number, IP, and URL so that you can request and receive a user trust score from our enriched data, rules, and scoring in a single API call.
 
 Our take on Trust is different from the usual approach to fraud. This API tells you how much you can trust this user. It’s based on 100+ data points to which we have access. We use complex algorithms based on data sanity and customer behavior in our partner network.
 
 ## Trust Score & Usage
 
-TrustScore offers two distinct endpoints: General and Detailed.
+Fundstream offers two distinct endpoints: General and Detailed.
 
 - **General Endpoint:** Provides basic information by indicating whether a transaction is permitted or not with a simple 'yes' or 'no' response.
 - **Detailed Endpoint:** Offers an in-depth analysis beyond simple allowance or denial, providing nuanced insights and information about transaction legitimacy.
@@ -32,11 +32,11 @@ Trust scores range from `0` to `5`. A trust score of `0` indicates limited infor
 
 ## Access Permission
 
-Access to this API is restricted. If you receive a `401` error with "You are not allowed to call this API service," please contact your Paysecure sales representative for access.
+Access to this API is restricted. If you receive a `401` error with "You are not allowed to call this API service," please contact your Fundstream sales representative for access.
 
 ## API Endpoint
 
-**POST** `https://api.paysecure.net/api/v1/trustScore`
+**POST** `https://api.fundstream.net/api/v1/trustScore`
 
 ## Mandatory Parameters
 
@@ -62,7 +62,7 @@ Additional optional parameters improve response accuracy. Values should be strin
 
 ---
 
-# Paysecure checkTransactionAllowed API
+# Fundstream checkTransactionAllowed API
 
 ## Overview
 
@@ -70,7 +70,7 @@ The `checkTransactionAllowed` API provides a binary response indicating whether 
 
 ## API Endpoint
 
-**POST** `https://api.paysecure.net/api/v1/checkTransAllowed`
+**POST** `https://api.fundstream.net/api/v1/checkTransAllowed`
 
 ## Mandatory Parameters
 

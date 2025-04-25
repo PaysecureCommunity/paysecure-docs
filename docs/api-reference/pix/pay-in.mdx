@@ -1,7 +1,7 @@
 ---
 id: "pay-in"
 title: "Pix PayIn API"
-description: "API for processing payments and payouts using Paysecure."
+description: "API for processing payments and payouts using Fundstream."
 openapi: "openapi POST /purchases"
 ---
 ## PayIn Flows
@@ -10,11 +10,11 @@ openapi: "openapi POST /purchases"
 To initiate a PIX payment, a payer can scan the code using their PIX payment app (such as Itau, NuBank, etc.). These codes comply with BCB’s infrastructure requirements to ensure that the merchant's details are stored securely and there are no errors during the payment journey.
 
 #### Flow
-1. Merchant platforms can create a dynamic QR code by passing the relevant parameter using Paysecure’s API.
+1. Merchant platforms can create a dynamic QR code by passing the relevant parameter using Fundstream’s API.
 2. The platform can display the dynamic QR code on its app or any website at checkout or on a third-party app.
 3. The payer scans the QR code from the PIX app of their choice on their mobile.
 4. The payer authorizes the transaction on the app by entering a valid PIN.
-5. Once the payment is done, the merchant platform receives a transaction status callback from Paysecure to a pre-configured endpoint.
+5. Once the payment is done, the merchant platform receives a transaction status callback from Fundstream to a pre-configured endpoint.
 6. The platform can also check the request status using the reference ID generated from the collection request using the Check Payment Status API.
 
 
@@ -35,7 +35,7 @@ To initiate a PIX payment, a payer can scan the code using their PIX payment app
 
 ### **POST Create PayIn**
 ```bash
-https://api.paysecure.net/api/v1/payin/
+https://api.fundstream.net/api/v1/payin/
 ```
 To Initiate a payment, the very first call to make is `/purchases` with the required data in the request body.
 
@@ -79,11 +79,11 @@ While not mandatory, using `merchantRef` is strongly recommended as it provides:
 If not specified, the platform automatically assigns an internal `purchaseId` as the transaction reference.
 
 #### paymentMethod
-Specifies which payment solution to use for the transaction. When provided, Paysecure performs direct payment with the selected method instead of loading the Paysecure URL.
+Specifies which payment solution to use for the transaction. When provided, Fundstream performs direct payment with the selected method instead of loading the Fundstream URL.
 
 #### Example Request
 ```curl
-curl --location 'https://api.paysecure.net/api/v1/purchases' \
+curl --location 'https://api.fundstream.net/api/v1/purchases' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer Token' \
 --data-raw '{
@@ -187,7 +187,7 @@ curl --location 'https://api.paysecure.net/api/v1/purchases' \
   "failure_callback": "https://test2.com",
   "platform": "API",
   "created_from_ip": "223.182.100.34",
-  "checkout_url": "https://api.paysecure.net/payments/65f9368cb905381ba207b3c4/"
+  "checkout_url": "https://api.fundstream.net/payments/65f9368cb905381ba207b3c4/"
 }
 ```
 

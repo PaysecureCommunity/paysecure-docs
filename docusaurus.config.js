@@ -82,7 +82,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Paysecure`,
+      copyright: `Copyright © ${new Date().getFullYear()} Fundstream`,
     },
     prism: {
       theme: lightCodeTheme,

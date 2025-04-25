@@ -1,12 +1,12 @@
 {
     "openapi": "3.0.1",
     "info": {
-      "title": "Paysecure Mobile Money API",
+      "title": "Fundstream Mobile Money API",
       "version": "1.0.0"
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.com/v1"
+        "url": "https://staging.fundstream.com/v1"
       }
     ],
     "security": [

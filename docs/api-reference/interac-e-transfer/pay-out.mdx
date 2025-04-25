@@ -7,7 +7,7 @@ openapi: "pay-out-openapi POST /payout"
 
 ## How It Works
 
-To initiate a payout, the merchant has to provide Paysecure with the PIX details, including the recipient's PIX key (e.g., CPF/CNPJ, phone number, or email), amount, and any additional information.
+To initiate a payout, the merchant has to provide Fundstream with the PIX details, including the recipient's PIX key (e.g., CPF/CNPJ, phone number, or email), amount, and any additional information.
 
 If the merchant has enough balance, the transaction amount will be deducted from the merchant's balance and sent to the user.
 
@@ -22,8 +22,8 @@ If the merchant has enough balance, the transaction amount will be deducted from
 - **Merchant approval:** If everything is OK, the merchant approves the payout request.
 
 #### **Processing:**
-- **Payment details:** Using Paysecure’s API, the merchant provides the recipient's Pix key (which can be a phone number, email, CPF/CNPJ, or random key) and the transfer amount.
-- **Funds check:** Paysecure verifies if sufficient funds are available in the merchant's account to cover the transfer.
+- **Payment details:** Using Fundstream’s API, the merchant provides the recipient's Pix key (which can be a phone number, email, CPF/CNPJ, or random key) and the transfer amount.
+- **Funds check:** Fundstream verifies if sufficient funds are available in the merchant's account to cover the transfer.
 - **Processing & Key mapping:** The recipient's Pix key is validated using the DICT (Transactional Identifier Directory). This central database links Pix keys with users' bank accounts.
 
 #### **Payout:**
@@ -38,11 +38,11 @@ The merchant requests the INTERAC-E-TRANSFER payout API to initiate a PayOut (wi
 
 ### Authorization
 **Bearer Token**
-This API requires Bearer Token authentication, which can be retrieved from the Paysecure API Documentation - Live.
+This API requires Bearer Token authentication, which can be retrieved from the Fundstream API Documentation - Live.
 
 ### Endpoint
 **POST**: Create Payout  
-`https://staging.paysecure.net/api/v1/payouts/`
+`https://staging.fundstream.net/api/v1/payouts/`
 
 ### Required Parameters
 To generate a payout, you must provide the **Brand ID** (request body) and **API key** (header), both available in the merchant dashboard.
@@ -100,7 +100,7 @@ const axios = require("axios");
 
 (async () => {
   const response = await axios.post(
-    "https://api.paysecure.net/api/v1/payouts",
+    "https://api.fundstream.net/api/v1/payouts",
     {
       recipient: {
         email: "john.doe@example.com",
@@ -135,7 +135,7 @@ const axios = require("axios");
 
 ### cURL Request
 ```sh
-curl --location 'https://api.paysecure.net/api/v1/payouts' \
+curl --location 'https://api.fundstream.net/api/v1/payouts' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer your-token-here' \
 --data-raw '{
@@ -192,7 +192,7 @@ This endpoint allows you to retrieve all details of a payout, including its tran
 
 ### Endpoint
 **GET**: Get Payout Status  
-`https://api.paysecure.net/api/v1/payouts/{payoutId}/`
+`https://api.fundstream.net/api/v1/payouts/{payoutId}/`
 
 ### Required Parameters
 You need to pass the `payoutId` in the API URL.
@@ -222,7 +222,7 @@ const axios = require("axios");
   const payoutId = "61f8c0a5e4b06a7c9d1e2f3c";
   
   const response = await axios.get(
-    `https://api.paysecure.net/api/v1/payouts/${payoutId}`,
+    `https://api.fundstream.net/api/v1/payouts/${payoutId}`,
     {
       headers: {
         "Authorization": "Bearer your-token-here",
@@ -237,7 +237,7 @@ const axios = require("axios");
 
 ### cURL Request
 ```sh
-curl --location 'https://api.paysecure.net/api/v1/payouts/61f8c0a5e4b06a7c9d1e2f3c' \
+curl --location 'https://api.fundstream.net/api/v1/payouts/61f8c0a5e4b06a7c9d1e2f3c' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer your-token-here'
 ```

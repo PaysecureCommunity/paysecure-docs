@@ -1,15 +1,16 @@
 module.exports = {
     paysecure: {
-      title: 'Paysecure API Docs',
-      tagline: 'Customised API documentation',
-      logo: 'img/logo.png',
+      title: 'Fundstream',
+      tagline: 'API documentation',
+      logo: 'img/fundstream-logo.png',
+      url: 'https://app.thefundstream.org/',
+      baseUrl: '/',
       favicon: 'img/favicon.ico',
       theme: {
-        primaryColor: '#008060',
+        primaryColor: '#45C5F2',
         navbarStyle: 'light',
         footerStyle: 'dark',
-      },
-      github: 'https://github.com/PaysecureCommunity/paysecure-docs',
-    },
+      }
+    }
   };
   

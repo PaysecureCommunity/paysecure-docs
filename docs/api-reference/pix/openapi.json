@@ -1,18 +1,16 @@
 {
     "openapi": "3.0.0",
     "info": {
-      "title": "Paysecure API - PIX Payments",
+      "title": "Fundstream API - PIX Payments",
       "description": "API for processing PIX payments in Brazil",
       "version": "1.0.0",
       "contact": {
-        "name": "Paysecure Support",
-        "url": "https://developer.paysecure.net",
-        "email": "support@paysecure.net"
+        "name": "Fundstream Support"
       }
     },
     "servers": [
       {
-        "url": "https://staging.paysecure.net/api/v1",
+        "url": "https://staging.fundstream.net/api/v1",
         "description": "Production Server"
       }
     ],
@@ -533,7 +531,7 @@
               "type": "string",
               "format": "uri",
               "description": "URL for checkout page",
-              "example": "https://api.paysecure.net/payments/65f9368cb905381ba207b3c4/"
+              "example": "https://api.fundstream.net/payments/65f9368cb905381ba207b3c4/"
             }
           }
         },
